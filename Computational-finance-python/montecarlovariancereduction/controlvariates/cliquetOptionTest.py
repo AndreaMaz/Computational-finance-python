@@ -4,7 +4,7 @@
 We test here the performances of three methods for the computation of the price
 of a Cliquet option, in terms of the variance of the computed prices:
     - standard Monte-Carlo
-    - Monte-Carlo wuth Antithetic variables
+    - Monte-Carlo with Antithetic variables
     - Monte-Carlo with Control variates.
     
 We look at the variance since the analytic price is in general not known
@@ -63,27 +63,27 @@ timesCV = []
 
 for k in range(numberOfTests):
     #first we do it via standard Monte-Carlo
-    start1 = time.time()
+    start = time.time()
     returnsRealizations = generator.generateReturns()   
     priceStandardMC = cliquetOption.discountedPriceOfTheOption(returnsRealizations, r)       
-    end1 = time.time()
+    end = time.time()
     pricesStandard.append(priceStandardMC)
-    timesStandard.append(end1 - start1)
+    timesStandard.append(end - start)
     
     #then via Monte-Carlo with Antithetic variables
-    start2 = time.time()
+    start = time.time()
     returnsRealizationsAV = generator.generateReturnsAntitheticVariables() 
     priceAV = cliquetOption.discountedPriceOfTheOption(returnsRealizationsAV, r)  
-    end2 = time.time()
+    end = time.time()
     pricesAV.append(priceAV)        
-    timesAV.append(end2 - start2)
+    timesAV.append(end - start)
    
     #and finally with control variates     
-    start3 = time.time()
+    start = time.time()
     priceCV = cliquetWithControlVariates.getPriceViaControlVariates()  
-    end3 = time.time()
+    end = time.time()
     pricesCV.append(priceCV)
-    timesCV.append(end3 - start3)
+    timesCV.append(end - start)
     
 print() 
 print("The variance of the prices using standard Monte-Carlo is ", np.var(pricesStandard))

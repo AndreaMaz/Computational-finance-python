@@ -3,8 +3,7 @@
 """
 @author: Andrea Mazzon
 """
-import numpy as np
-import math 
+import numpy as np 
 
 class EuropeanOption:
     """
@@ -156,24 +155,23 @@ class EuropeanOption:
         binomialModel = self.underlyingModel 
         q = binomialModel.riskNeutralProbabilityUp
         
-        #we consider a number of times equal to maturity + 1
-        valuesPortfolio = np.full((maturity + 1,maturity + 1),math.nan) 
+        valuesPortfolio = []
         
         #realizations of the process at maturity
         processRealizations = binomialModel.getRealizationsAtGivenTime(maturity)
         #payoffs at maturity
         payoffRealizations = [payoffFunction(x) for x in processRealizations]
         #the final values of the portfolio are simplythe payoffs
-        valuesPortfolio[maturity,:] = payoffRealizations
-        
-        for timeIndexBackward in range(maturity - 1,-1, -1):    
+        valuesPortfolio.append(payoffRealizations)
+
+        for timeBackFromMaturity in range(1, maturity + 1):    
             #V(k,j)=qV(k+1,j+1)+(1-q)V(k,j+1), with j current time, k number of
             #ups until current time
-            valuesPortfolio[timeIndexBackward,0: timeIndexBackward + 1] = \
-            q * valuesPortfolio[timeIndexBackward + 1, 0:timeIndexBackward + 1] + \
-            (1-q) * valuesPortfolio[timeIndexBackward + 1, 1:timeIndexBackward + 2]
+            valuesPortfolioAtTime = [q * x + (1-q) * y for (x,y) \
+                in zip(valuesPortfolio[timeBackFromMaturity - 1][:-1], valuesPortfolio[timeBackFromMaturity - 1][1:])]
+            valuesPortfolio.append(valuesPortfolioAtTime)
         
-        return valuesPortfolio
+        return valuesPortfolio[::-1]
       
         
     def getValuesPortfolioBackwardAtGivenTime(self, payoffFunction, currentTime, maturity):
@@ -197,7 +195,7 @@ class EuropeanOption:
 
         """
         allValuesPortfolio = self.getValuesPortfolioBackward(payoffFunction, maturity)
-        valuesPortfolioAtCurrentTime = allValuesPortfolio[currentTime, 0: currentTime + 1]
+        valuesPortfolioAtCurrentTime = allValuesPortfolio[currentTime]
         return valuesPortfolioAtCurrentTime
     
             
@@ -223,11 +221,12 @@ class EuropeanOption:
         """
         
         binomialModel = self.underlyingModel 
-        r = binomialModel.interestRate
+        rho = binomialModel.interestRate
         
-        discountedValuesPortfolioAtCurrentTime = \
-            self.getValuesPortfolioBackwardAtGivenTime(payoffFunction, currentTime, maturity) \
-            *((1+r)**(-(maturity - currentTime)))
+        valuesPortfolio = self.getValuesPortfolioBackwardAtGivenTime(payoffFunction, currentTime, maturity)
+        discountedValuesPortfolioAtCurrentTime = [x * (1+rho)**(-(maturity - currentTime)) \
+                                                       for x in valuesPortfolio]
+ 
         
         return discountedValuesPortfolioAtCurrentTime
 
@@ -254,7 +253,7 @@ class EuropeanOption:
         """
         
         portfolioValues = self.getValuesPortfolioBackward(payoffFunction, maturity)
-        initialValuePortfolio = portfolioValues[0,0]
+        initialValuePortfolio = portfolioValues[0][0]
         
         return initialValuePortfolio
 
@@ -315,33 +314,33 @@ class EuropeanOption:
         """
         binomialModel = self.underlyingModel
         
-        amountInRiskyAsset = np.empty((maturity,maturity)) 
-        amountInRiskFreeAsset = np.empty((maturity,maturity)) 
+        amountInRiskyAsset = []
+        amountInRiskFreeAsset = []
         
         u = binomialModel.increaseIfUp
         d = binomialModel.decreaseIfDown
         rho = binomialModel.interestRate
         
-        for timeIndexBackward in range(maturity - 1,-1, -1):
+        for timeBackFromMaturity in range(1, maturity + 1):
                         
-            processAtNextTime = binomialModel.getRealizationsAtGivenTime(timeIndexBackward + 1)
+            processAtNextTime = binomialModel.getRealizationsAtGivenTime(maturity - timeBackFromMaturity + 1)
             portfolioAtNextTime = \
-                self.getValuesDiscountedPortfolioBackwardAtGivenTime(payoffFunction, timeIndexBackward + 1, maturity)
+                self.getValuesDiscountedPortfolioBackwardAtGivenTime(payoffFunction, maturity - timeBackFromMaturity + 1, maturity)
             
             currentAmountInRiskyAsset = \
             [(portfolioAtNextTime[k]-portfolioAtNextTime[k+1])/(processAtNextTime[k]-processAtNextTime[k+1])
-                                  for k in range(timeIndexBackward + 1)]
+                                  for k in range(maturity - timeBackFromMaturity + 1)]
             
-            amountInRiskyAsset[timeIndexBackward, 0 : timeIndexBackward + 1] = currentAmountInRiskyAsset 
+            amountInRiskyAsset.append(currentAmountInRiskyAsset)
             
             currentAmountInRiskFreeAsset = [(u * portfolioAtNextTime[k+1] - d * portfolioAtNextTime[k])\
-                                            /((u-d)*((1+rho)**timeIndexBackward))
-                                  for k in range(timeIndexBackward + 1)]
+                                            /((u-d)*((1+rho)**(maturity - timeBackFromMaturity)))
+                                  for k in range(maturity - timeBackFromMaturity + 1)]
             
-            amountInRiskFreeAsset[timeIndexBackward, 0 : timeIndexBackward + 1] = \
-                currentAmountInRiskFreeAsset
+            amountInRiskFreeAsset.append(currentAmountInRiskFreeAsset)
+                
         
-        return amountInRiskyAsset, amountInRiskFreeAsset
+        return amountInRiskyAsset[::-1], amountInRiskFreeAsset[::-1]
     
 
     def getStrategyAtGivenTime(self, payoffFunction, currentTime, maturity):
@@ -373,7 +372,7 @@ class EuropeanOption:
         
         amountInRiskyAsset, amountInRiskFreeAsset = self.getStrategy(payoffFunction, maturity)
         
-        amountInRiskyAssetAtCurrentTime = amountInRiskyAsset[currentTime, 0 : currentTime + 1]
-        amountInRiskFreeAssetAtCurrentTime = amountInRiskFreeAsset[currentTime, 0 : currentTime + 1]
+        amountInRiskyAssetAtCurrentTime = amountInRiskyAsset[currentTime]
+        amountInRiskFreeAssetAtCurrentTime = amountInRiskFreeAsset[currentTime]
        
         return amountInRiskyAssetAtCurrentTime, amountInRiskFreeAssetAtCurrentTime

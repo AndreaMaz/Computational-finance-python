@@ -7,8 +7,12 @@ on a binomial model
 @author: Andrea Mazzon
 """
 
-from binomialmodel.optionvaluation.europeanOption import EuropeanOption
+import time
+
+from europeanOption import EuropeanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
+
+
 
 initialValue = 100
 decreaseIfDown = 0.5
@@ -25,13 +29,15 @@ maturity = numberOfTimes - 1
 
 payoff = lambda x : max(x-initialValue,0)
 
+start = time.time()
+
 priceWithWeightedSum = myPayoffEvaluator.evaluateDiscountedPayoff(payoff, maturity)
 priceFromStrategy = myPayoffEvaluator.getInitialDiscountedValuePortfolio(payoff, maturity)
 
 print("The discounted price computed by weighting the payoff with the realizations' probabilities is",
       priceWithWeightedSum)
 print()
-print("The discounted price computed by weighting the payoff with the realizations' probabilities is",
+print("The discounted price of the option computed going backward is ",
       priceFromStrategy)
 print()
 
@@ -39,7 +45,12 @@ strategy = myPayoffEvaluator.getValuesPortfolioBackward(payoff, maturity)
 
 currentTime = maturity - 1
 
+tAmountInRiskyAsset, tAmountInRiskFreeAsset = myPayoffEvaluator.getStrategy(payoff, maturity)
+
+
 amountInRiskyAsset, amountInRiskFreeAsset = myPayoffEvaluator.getStrategyAtGivenTime(payoff, currentTime, maturity)
+
+end = time.time()
 
 print("The amount of money that has to be invested in the risky asset at time ",
       currentTime, " is")
@@ -57,3 +68,6 @@ print()
 
 print('\n'.join('{:.3}'.format(amount) for amount in amountInRiskFreeAsset))
 
+print()
+
+print("Elapse time ", end - start)

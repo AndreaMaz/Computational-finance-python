@@ -57,7 +57,7 @@ class SimpleEuropeanOption:
 
         Parameters
         ----------
-        payoffFunction : lambda function
+        payoffFunction : function
             the function describing the payoff of the option
 
         Returns
@@ -85,7 +85,7 @@ class SimpleEuropeanOption:
 
         Parameters
         ----------
-        payoffFunction : lambda function
+        payoffFunction : function
             the function describing the payoff of the option
         maturity : double
             the maturity of the option
@@ -112,8 +112,8 @@ class SimpleEuropeanOption:
 
         Parameters
         ----------
-        payoffFunction : lambda function
-            the finction describing the payoff of the option
+        payoffFunction : function
+            the function describing the payoff of the option
         maturity : double
            the maturity of the option 
 

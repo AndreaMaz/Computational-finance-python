@@ -156,6 +156,7 @@ class ControlVariatesCliquetBS:
 
         """
         
+        #the options are at the money: we are considering an option on the return
         initialValue = 1
         
         maturityOfTheCallOptions = self.maturity/self.numberOfIntervals
@@ -177,14 +178,17 @@ class ControlVariatesCliquetBS:
                                                maturityOfTheCallOptions, secondStrike)\
             * discountFactorBlackScholes
         
-        #we now discount the price with respect to the maturoty of the Cliquet
+        #we repeat the same over all the time intervals, so we multiply by
+        #their number
+        price = self.numberOfIntervals * \
+            (self.localFloor + firstCallPrice - secondCallPrice)
+        
+        #we now discount the price with respect to the maturity of the Cliquet
         #option
         discountFactorCliquetOption = math.exp(- self.r * self.maturity)
         
-        #we repeat the same over all the time intervals, so we multiply by
-        #their number
-        return discountFactorCliquetOption * self.numberOfIntervals \
-             * (self.localFloor + firstCallPrice - secondCallPrice)
+        
+        return discountFactorCliquetOption * price
     
     
     def getPriceViaControlVariates(self):  

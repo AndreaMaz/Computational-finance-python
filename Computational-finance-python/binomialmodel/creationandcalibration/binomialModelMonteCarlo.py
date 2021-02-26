@@ -7,9 +7,10 @@
 
 import numpy as np 
 from random import seed
-
 import matplotlib.pyplot as plt
-from binomialmodel.creationandcalibration.binomialModel import BinomialModel 
+import math
+
+from binomialModel import BinomialModel 
 
 #note the syntax to tell the compiler that this class extends the (abstract)
 #class BinomialModel
@@ -188,7 +189,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         #are hosted in an array, it's easier to perform operations with them:
         #for example, remember that when you sum or multiply two lists, the
         #operation is not executed component-wise.
-        realizations = np.empty((self.numberOfTimes,self.numberOfSimulations))     
+        realizations = np.full((self.numberOfTimes,self.numberOfSimulations),math.nan)     
         # first the initial values. Look at how we can fill a vector with a single
         # value in Python.
         realizations[0, :] = np.full((self.numberOfSimulations), self.initialValue)

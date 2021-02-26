@@ -22,9 +22,9 @@ class AmericanOption:
 
     Methods
     -------
-    getValueOption(self, payoffFunction, maturity)
-        It returns the value of the american option of maturity maturity for
-        the given payoff function 
+    getValueOption(payoffFunction, maturity)
+        It returns the value of the american option of maturity for the given
+        payoff function 
    
     analysisOption(payoffFunction, maturity)
         For the given maturity and payoff function, it returns:
@@ -35,17 +35,30 @@ class AmericanOption:
         it's convenient to wait
     """
     def __init__(self, underlyingProcess):
+        """
+
+        Parameters
+        ----------
+        underlyingModel : binomial.creationandcalibration.BinomialModel
+            the underlying binomialmodel 
+
+        Returns
+        -------
+        None.
+
+        """
+        
         self.underlyingProcess = underlyingProcess
         
     
     def getValueOption(self, payoffFunction, maturity):
         """
-        It returns the value of the american option of maturity maturity for
-        the given payoff function 
+        It returns the value of the american option of maturity for the given
+        payoff function 
 
         Parameters
         ----------
-        payoffFunction : lambda function 
+        payoffFunction : function 
             the function representing the payoff.
         maturity : int
             the maturity of the option.
@@ -83,8 +96,7 @@ class AmericanOption:
             #V(j,k)=qV(j+1,k+1)+(1-q)V(j+1,k+1), where j is time and k the number
             #of ups up to time
             valuationPart = [(q * x + (1 - q) * y)/(1+r) for x,y in 
-                              zip(valuesOption[0:(timeIndexBackward + 1)], 
-                                  valuesOption[1:(timeIndexBackward + 2)])]    
+                              zip(valuesOption[:-1],  valuesOption[1:])]    
             
             #and then we take the maximums: these are the current values of the option
             valuesOption = [max(x,y) for x,y in zip(optionPart, valuationPart)]    
@@ -103,23 +115,23 @@ class AmericanOption:
 
         Parameters
         ----------
-        payoffFunction : lambda function 
+        payoffFunction : function 
             the function representing the payoff.
         maturity : int
             the maturity of the option.
 
         Returns
         -------
-        valuesOption : list
+        valuesOption : array
             a triangular matrix with the discounted values of the american
             option at every time
-        valuesExercise : list
+        valuesExercise : array
             a triangular matrix with the discounted amount of money one would
             get if he/she exercises the option
-        valuesIfWait : list
+        valuesIfWait : array
             a triangular matrix with the discounted amount of money one would
             get if waiting
-        exercise : list
+        exercise : array
             a triangular matrix with 1 when it's convenient to exercise the
             option and 0 if it's convenient to wait.
 

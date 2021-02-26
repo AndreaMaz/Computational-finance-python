@@ -32,7 +32,7 @@ class CliquetOption:
     numberOfSimulations : int
         the number of simulated trajectories of the returns
     maturity : float
-            the maturity of the option
+         the maturity of the option
     localFloor : float
         the floor for the single return in the option
     localCap : float
@@ -99,7 +99,7 @@ class CliquetOption:
 
         Parameters
         ----------
-        returns : list
+        returns : list, or array
             a vector representing the returns of the underlying process for one
             specific simulation
 
@@ -126,7 +126,7 @@ class CliquetOption:
 
         Parameters
         ----------
-        returnsForAllSimulations : list
+        returnsForAllSimulations : list, or array
             a matrix whose i-th row represents the returns for the i-th simulation
 
         Returns
@@ -150,7 +150,7 @@ class CliquetOption:
     
         Parameters
         ----------
-        returnsForAllSimulations : list
+        returnsForAllSimulations : list, or array
             a matrix whose i-th row represents the returns for the i-th simulation
         interestRate : float
             the interest rate with resepct to which the option is price of the

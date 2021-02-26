@@ -43,10 +43,10 @@ class GenerateBSReturns:
 
     Methods
     -------
-    generateReturns():
+    generateReturns(self):
         It returns a number N = self.numberOfSimulations of realizations of the
         log-normal process at time self.T.
-    generateReturnsAntitheticVariables():
+    generateReturnsAntitheticVariables(self):
         It returns a number N = self.numberOfSimulations of realizations of the
         log-normal process at time self.T, using Antithetic Variables
     """
@@ -83,26 +83,24 @@ class GenerateBSReturns:
         Returns
         -------
         blackScholesRealizations : list
-            a matrix representing the returns of the process. In particular,
-            blackScholesRealizations[i] represents the returns for the i-th
-            simulation
+            a matrix representing the returns of the process. Row i represents
+            the returns for the i-th simulation
+
         """
         
         lenghthOfIntervals = self.finalTime / self.numberOfIntervals 
         
-        blackScholesReturns = []
+        #we initialize the matrix, declaring its size
+        blackScholesReturns = np.full((self.numberOfSimulations,self.numberOfIntervals),np.nan)
         
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
         
+        #this will also be a matrix!
         for k in range (self.numberOfSimulations):
-            #note the way to get a given number of realizations of a standard normal
-            #random variable. 
             standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
-            #usual way to write a log-normal random variable
-            returns = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
+            blackScholesReturns[k] = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
                 for x in standardNormalRealizations]
-            blackScholesReturns.append(returns)
             
         return blackScholesReturns
        
@@ -124,7 +122,7 @@ class GenerateBSReturns:
         halfSimulations = math.ceil(self.numberOfSimulations/2)
         lenghthOfIntervals = self.finalTime / self.numberOfIntervals 
         
-        blackScholesReturns = []
+        blackScholesReturns = np.full((self.numberOfSimulations,self.numberOfIntervals),np.nan)
         
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
@@ -132,12 +130,12 @@ class GenerateBSReturns:
         #we generate the standard normal random generations only N/2 times
         for k in range (halfSimulations):
             standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
-            #we append two rows: one for the generated realization, one for their
+            #we define two rows: one for the generated realization, one for their
             #opposite
-            blackScholesReturns.append([firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
-                for x in standardNormalRealizations])
-            blackScholesReturns.append(
+            blackScholesReturns[k] = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
+                for x in standardNormalRealizations]
+            blackScholesReturns[k+halfSimulations] =  \
                     [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * (-x)) \
-                         for x in standardNormalRealizations])
+                         for x in standardNormalRealizations] 
                
         return blackScholesReturns

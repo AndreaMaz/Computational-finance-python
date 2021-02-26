@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Here we class the calibration of the parameters u > 1 + rho, where rho is the
+Here we test the calibration of the parameters u > 1 + rho, where rho is the
 interest rate, and d < 1 such that S(j+1)=uS(j) with probability q and
 S(j+1)=dS(j) with probability d 
 

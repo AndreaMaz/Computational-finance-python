@@ -13,6 +13,7 @@ the initial value.
 @author: Andrea Mazzon
 """
 from binomialModelSmart import BinomialModelSmart
+from BinomialModelSmartWithLists import BinomialModelSmartWithLists
 
 initialValue = 3.0
 decreaseIfDown = 0.5
@@ -20,7 +21,7 @@ increaseIfUp = 2
 numberOfTimes = 150
 interestRate = 0.1
 
-myBinomialModelSmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
+myBinomialModelSmart = BinomialModelSmartWithLists(initialValue, decreaseIfDown, increaseIfUp,
                                 numberOfTimes, interestRate) 
 
 #prints..
@@ -30,3 +31,5 @@ myBinomialModelSmart.printEvolutionDiscountedAverage()
 #..and plots
 myBinomialModelSmart.plotEvolutionProbabilitiesOfGain()
 myBinomialModelSmart.plotEvolutionDiscountedAverage()
+
+real = myBinomialModelSmart.getRealizations()

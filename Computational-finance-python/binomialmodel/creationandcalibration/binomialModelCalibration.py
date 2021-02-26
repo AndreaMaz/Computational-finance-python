@@ -26,7 +26,7 @@ class BinomialModelCalibration:
     interestRate : float
         the interest rate rho such that the risk free asset B follows the dynamics
         B(j+1) = (1+rho)B(j)
-    riskNeutralProbabilityUp : double
+    riskNeutralProbabilityUp : float
         the risk neutral probability q =(1+rho-d)/(u-d) such that
         P(S(j+1)=S(j)*u) = q, P(S(j+1)=S(j)*d) = 1 - q,
         u > rho + 1, d < 1   
@@ -56,7 +56,7 @@ class BinomialModelCalibration:
         interestRate : float
             the interest rate rho such that the risk free asset B follows the dynamics
             B(j+1) = (1+rho)B(j)
-        riskNeutralProbabilityUp : double
+        riskNeutralProbabilityUp : float
             the risk neutral probability q =(1+rho-d)/(u-d) such that
             P(S(j+1)=S(j)*u) = q, P(S(j+1)=S(j)*d) = 1 - q,
             u > rho + 1, d < 1
@@ -121,11 +121,11 @@ class BinomialModelCalibration:
         interestRate = self.interestRate
         initialValue = self.initialValue
         #we construct the binomial model from the parameters..
-        mybinomialmodelsmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
+        myBinomialModelSmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
                                observationTime + 1, interestRate) 
         
         #..and we want to compute the variance of log(S(observationTime)/S(0))
-        varianceEvaluator = EuropeanOption(mybinomialmodelsmart)
+        varianceEvaluator = EuropeanOption(myBinomialModelSmart)
       
         firstPayoff = lambda x : math.log(x/initialValue)**2
         secondPayoff = lambda x : math.log(x/initialValue)
