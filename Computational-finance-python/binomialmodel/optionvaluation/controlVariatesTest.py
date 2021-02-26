@@ -30,11 +30,12 @@ european = []
 for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     
     evaluator = AmericanOptionWithControlVariates(initialValue, r, sigma, maturity, strike) 
-    
+    #note that we want the put price: we then select the entries [1]
     americanCV.append(evaluator.getAmericanCallAndPutPriceWithControlVariates(numberOfTimes)[1])
     americanBinomial.append(evaluator.getAmericanCallAndPutPriceWithBinomialModel(numberOfTimes)[1])
     european.append(evaluator.getEuropeanCallAndPutPriceWithBinomialModel(numberOfTimes)[1])
   
+#here as well 
 blackScholesPrice = evaluator.blackScholesPriceCallAndPut()[1] 
 blackScholesVector = [blackScholesPrice] * (maximumNumberOfTimes - 1)
 
