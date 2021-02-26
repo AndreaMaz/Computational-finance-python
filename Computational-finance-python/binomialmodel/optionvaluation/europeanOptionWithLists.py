@@ -15,6 +15,8 @@ class EuropeanOption:
     and a one invested on the risk free asset, that must replicate the payoff at
     maturity. Moreover, the strategy (i.e., how much money is invested
     in the risky and risk free asset) can be got at any time before maturity.
+    
+    The values of the replicating portfolio are returned as a list.
 
     ...
 
@@ -114,7 +116,7 @@ class EuropeanOption:
 
         Parameters
         ----------
-        payoffFunction : lambda function 
+        payoffFunction : function 
             the function representing the payoff we want to valuate.
         maturity : int
             the time at which we want to valuate the discounted payoff.
@@ -125,7 +127,7 @@ class EuropeanOption:
             the average of the realizations of payoffFunction(S(timeIndex))
 
         """
-        discountedAverage = self.evaluatePayoff(payoffFunction, maturity)*\
+        discountedAverage = self.evaluatePayoff(payoffFunction, maturity)* \
             (1+self.underlyingModel.interestRate)**(-maturity)
         return discountedAverage
     
@@ -161,16 +163,23 @@ class EuropeanOption:
         processRealizations = binomialModel.getRealizationsAtGivenTime(maturity)
         #payoffs at maturity
         payoffRealizations = [payoffFunction(x) for x in processRealizations]
-        #the final values of the portfolio are simplythe payoffs
+        #the final values of the portfolio are simply the payoffs. Here we have 
+        #to store the values from the last ones to the first ones. Then we 
+        #revert the orders of the rows of valuesPortfolio.
         valuesPortfolio.append(payoffRealizations)
 
+        #a small difference in the indexing with respect to before, due to the
+        #fact that we simply append the realizations of the portfolio to the
+        #list. Maybe a bit less intuitive.
         for timeBackFromMaturity in range(1, maturity + 1):    
             #V(k,j)=qV(k+1,j+1)+(1-q)V(k,j+1), with j current time, k number of
             #ups until current time
             valuesPortfolioAtTime = [q * x + (1-q) * y for (x,y) \
-                in zip(valuesPortfolio[timeBackFromMaturity - 1][:-1], valuesPortfolio[timeBackFromMaturity - 1][1:])]
+                in zip(valuesPortfolio[timeBackFromMaturity - 1][:-1], \
+                       valuesPortfolio[timeBackFromMaturity - 1][1:])]
             valuesPortfolio.append(valuesPortfolioAtTime)
         
+        # we revert the order of the rows of valuesPortfolio
         return valuesPortfolio[::-1]
       
         
@@ -195,6 +204,9 @@ class EuropeanOption:
 
         """
         allValuesPortfolio = self.getValuesPortfolioBackward(payoffFunction, maturity)
+        #here it's simpler with respect to before: we only have to specify the row,
+        #the length is already set: the first row has length 1, the second one 2,
+        # and so on.
         valuesPortfolioAtCurrentTime = allValuesPortfolio[currentTime]
         return valuesPortfolioAtCurrentTime
     
@@ -224,6 +236,9 @@ class EuropeanOption:
         rho = binomialModel.interestRate
         
         valuesPortfolio = self.getValuesPortfolioBackwardAtGivenTime(payoffFunction, currentTime, maturity)
+        #note that we cannot do discountedValuesPortfolioAtCurrentTime *  (1+rho)**(-(maturity - currentTime))
+        #this operation is not allowed for lists (the multiplication by an int n)
+        #is allowed, but in this case you just get a list which is made of n copies of your lists.
         discountedValuesPortfolioAtCurrentTime = [x * (1+rho)**(-(maturity - currentTime)) \
                                                        for x in valuesPortfolio]
  
@@ -278,9 +293,9 @@ class EuropeanOption:
         """
         
         binomialModel = self.underlyingModel 
-        r = binomialModel.interestRate
+        rho = binomialModel.interestRate
                
-        initialDiscountedValuePortfolio = self.getInitialValuePortfolio(payoffFunction, maturity)*(1+r)**(-maturity)
+        initialDiscountedValuePortfolio = self.getInitialValuePortfolio(payoffFunction, maturity)*(1+rho)**(-maturity)
         return initialDiscountedValuePortfolio
     
     
@@ -320,7 +335,8 @@ class EuropeanOption:
         u = binomialModel.increaseIfUp
         d = binomialModel.decreaseIfDown
         rho = binomialModel.interestRate
-        
+        #same thing as in europeanOption, but with lists. Again, we have to
+        #revert the order of the rows afterwards. 
         for timeBackFromMaturity in range(1, maturity + 1):
                         
             processAtNextTime = binomialModel.getRealizationsAtGivenTime(maturity - timeBackFromMaturity + 1)

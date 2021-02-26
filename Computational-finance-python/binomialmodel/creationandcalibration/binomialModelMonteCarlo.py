@@ -90,8 +90,9 @@ class BinomialModelMonteCarlo(BinomialModel):
         It returns the entire path of the process for a given simulation index
     printPath(timeIndex)
         It prints the entire path of the process for a given simulation index
-    plotPath(timeIndex)
-        It plots the entire path of the process for a given simulation index
+    plotPaths(timeIndex)
+        It plots the paths of the process from simulationIndex to 
+        simulationIndex + numberOfPaths
     maximumAtGivenTime(timeIndex)
         It returns the maximum realization of the process at time timeIndex
     getEvolutionMaximum()
@@ -159,13 +160,13 @@ class BinomialModelMonteCarlo(BinomialModel):
         
         q = self.riskNeutralProbabilityUp
         
-        #look at how we define the size of the matrix that we will return
         upsAndDowns = []
         
-        #look at the syntax of range: we want timeIndex to start from 0 and being
-        #SMALLER than numberOfTimes - 1
         for timeIndex in range(self.numberOfTimes):
+            # we generate a number N = self.numberOfSimulations of (pseudo)
+            #random numbers with uniform distribution in (0,1)
             randomNumbers = np.random.uniform(0,1,self.numberOfSimulations)
+            #note the ternary conditional operator in Python
             upsAndDownsAtTime = [u if x < q else d for x in randomNumbers]
             upsAndDowns.append(upsAndDownsAtTime)
         return upsAndDowns
@@ -175,7 +176,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         """
         It generates and returns the realizations of the process.
         
-        The realizations are hosted in a matrix S whose row i represent the value
+        The realizations are hosted in an array matrix S whose row i represent the value
         of the process at time i for all the state of the world, and whose column
         j represents the path of the process for the simulation (or state of the world)
         j.  
@@ -185,14 +186,14 @@ class BinomialModelMonteCarlo(BinomialModel):
         array
             The matrix hosting the realizations of the process.
         """
-        #maybe, in this case, dealing with arrays instead of lists. If realizations
-        #are hosted in an array, it's easier to perform operations with them:
-        #for example, remember that when you sum or multiply two lists, the
-        #operation is not executed component-wise.
+        #maybe, in this case, it is bettere dealing with arrays instead of lists.
+        #If realizations are hosted in an array, it's easier to perform
+        #operations with them: for example, remember that when you sum or
+        #multiply two lists, the operation is not executed component-wise.
         realizations = np.full((self.numberOfTimes,self.numberOfSimulations),math.nan)     
         # first the initial values. Look at how we can fill a vector with a single
         # value in Python.
-        realizations[0, :] = np.full((self.numberOfSimulations), self.initialValue)
+        realizations[0] = [self.initialValue] * self.numberOfSimulations
         upsAndDowns = self.getUpsAndDowns()
         for timeIndex in range(1,self.numberOfTimes):
             for simulationIndex in range(self.numberOfSimulations):
@@ -200,6 +201,8 @@ class BinomialModelMonteCarlo(BinomialModel):
                 realizations[timeIndex, simulationIndex] = \
                     realizations[timeIndex - 1, simulationIndex]  * \
                         upsAndDowns[timeIndex - 1][simulationIndex]
+                        #note above a different syntax to access an element
+                        #of an array and of a list
         return realizations            
   
     
@@ -220,7 +223,7 @@ class BinomialModelMonteCarlo(BinomialModel):
 
         """
         realizations = self.realizations;
-        return realizations[timeIndex,:]
+        return realizations[timeIndex]
 
 
     def getPath(self, simulationIndex):
@@ -263,9 +266,10 @@ class BinomialModelMonteCarlo(BinomialModel):
         print()
         
         
-    def plotPath(self, simulationIndex, numberOfPaths):
+    def plotPaths(self, simulationIndex, numberOfPaths):
         """
-        It plots the entire path of the process for a given simulation index
+        It plots the paths of the process from simulationIndex to 
+        simulationIndex + numberOfPaths
 
         Parameters
         ----------
@@ -278,7 +282,6 @@ class BinomialModelMonteCarlo(BinomialModel):
 
         """
         for k in range(numberOfPaths):
-            
             path = self.getPath(simulationIndex + k);
             plt.plot(path)
         plt.xlabel('Time')

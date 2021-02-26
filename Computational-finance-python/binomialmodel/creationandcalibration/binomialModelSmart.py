@@ -12,8 +12,8 @@ from binomialmodel.creationandcalibration.binomialModel import BinomialModel as 
 class BinomialModelSmart(BinomialModel):
     """
     In this class we implement the simulation of a binomial model by using 
-    an approach that is computationally more effecient than Monte carlo, since
-    it needs much less memory, and most of all not prone to the accuracy problems
+    an approach that is computationally more effecient than Monte-Carlo, since
+    it needs much less memory, and most of all is not prone to the accuracy problems
     that Monte Carlo exhibits.
     
     In particular, here we don't rely on pseudo random numbers generations, but
@@ -21,6 +21,7 @@ class BinomialModelSmart(BinomialModel):
     attributing a (analytic!) probability to every realization. We then compute
     the average computing the weighted sum of the realizations with their probabilities.
     
+    The realizations of the process are stored in an array matrix.
     ...
 
     Attributes
@@ -34,14 +35,14 @@ class BinomialModelSmart(BinomialModel):
     numberOfTimes : int
         the number of times at which the process is simulated, initial time
         included
-    interest rate : double 
+    interest rate : float 
         the interest rate rho such that the risk free asset B follows the dynamics
         B(j+1) = (1+rho)B(j)
-    riskNeutralProbabilityUp : double
+    riskNeutralProbabilityUp : float
         the risk neutral probability q =(1+rho-d)/(u-d) such that
         P(S(j+1)=S(j)*u) = q, P(S(j+1)=S(j)*d) = 1 - q,
         u > rho+1, d<1
-    realizations : [double, double]
+    realizations : array
         a matrix containing the realizations of the process    
              
 
@@ -131,16 +132,16 @@ class BinomialModelSmart(BinomialModel):
 
         Returns
         -------
-        realizations : list
+        realizations : array
             a matrix storing all the possible realizations of the process up to
             time self.numberOfTimes - 1. 
         """
         #at every time N, there are N+1 possible values. The final time is
         #self.numberOfTimes - 1
-        realizations = np.empty((self.numberOfTimes,self.numberOfTimes))   
+        realizations = np.full((self.numberOfTimes,self.numberOfTimes),math.nan)  
         realizations[0,0] = self.initialValue
         for k in range(1, self.numberOfTimes):
-            #the first realization is the previous first realization times u..
+            #the first realization is the previous first realization times u
             realizations[k, 0] = self.increaseIfUp * realizations[k - 1, 0]
             #the second is the previous first realization times d, and so on up
             #to the last one, which is the previous last one times d
@@ -155,7 +156,7 @@ class BinomialModelSmart(BinomialModel):
 
         Returns
         -------
-        realization : list
+        realization : array
             a matrix representing the realizations of the process
 
         """
@@ -178,7 +179,7 @@ class BinomialModelSmart(BinomialModel):
 
         Returns
         -------
-        list
+        array
             a vector representing the realizations of the process at time timeIndex.
 
         """
@@ -208,7 +209,7 @@ class BinomialModelSmart(BinomialModel):
 
         Returns
         -------
-        list
+        array
             a vector representing the probabilities of every possible realization
             of the process at time timeIndex.
 
@@ -269,9 +270,7 @@ class BinomialModelSmart(BinomialModel):
         u = self.increaseIfUp
         d=self.decreaseIfDown
         return math.ceil(math.log(((1+rho)/d)**timeIndex,u/d))
-        #return math.ceil(math.log((self.decreaseIfDown**timeIndex)*(1+rho)**timeIndex,\
-        #                         self.increaseIfUp/self.decreaseIfDown))
-    
+        
     
     def getProbabilityOfGainAtGivenTime(self, timeIndex):
         """
@@ -295,6 +294,8 @@ class BinomialModelSmart(BinomialModel):
             threshold = self.findThreshold(timeIndex)
             #we sum the probabilities corresponding to all the realizations with
             #enough ups k, and then we take the percentage
+            #we have + 1 because 0:n is 0,1,..,n-1. We want to consider all the
+            #realizations with anumber of downs <= timeIndex - threshold
             return 100.0 * sum(probabilities[0:timeIndex - threshold + 1])
     
 

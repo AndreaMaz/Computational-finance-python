@@ -16,6 +16,8 @@ class EuropeanOption:
     and a one invested on the risk free asset, that must replicate the payoff at
     maturity. Moreover, the strategy (i.e., how much money is invested
     in the risky and risk free asset) can be got at any time before maturity.
+    
+    The values of the portfolio over time are returned as an array.
 
     ...
 
@@ -78,7 +80,7 @@ class EuropeanOption:
 
         Parameters
         ----------
-        payoffFunction : lambda function 
+        payoffFunction : function 
             the function representing the payoff we want to valuate.
         maturity : int
             the time at which we want to valuate the payoff.
@@ -148,7 +150,7 @@ class EuropeanOption:
 
         Returns
         -------
-        valuesPortfolio : list
+        valuesPortfolio : array
             a (triangular) matrix describing the value of the portfolio at
             every time before maturity
 
@@ -163,7 +165,7 @@ class EuropeanOption:
         processRealizations = binomialModel.getRealizationsAtGivenTime(maturity)
         #payoffs at maturity
         payoffRealizations = [payoffFunction(x) for x in processRealizations]
-        #the final values of the portfolio are simplythe payoffs
+        #the final values of the portfolio are simply the payoffs
         valuesPortfolio[maturity,:] = payoffRealizations
         
         for timeIndexBackward in range(maturity - 1,-1, -1):    
@@ -192,7 +194,7 @@ class EuropeanOption:
 
         Returns
         -------
-        valuesPortfolioAtCurrentTime : list
+        valuesPortfolioAtCurrentTime : array
             a vector describing the values of the portfolio at currentTime
 
         """
@@ -217,17 +219,19 @@ class EuropeanOption:
 
         Returns
         -------
-        valuesPortfolioAtCurrentTime : list
+        valuesPortfolioAtCurrentTime : array
             a vector describing the discounted values of the portfolio at currentTime
 
         """
         
         binomialModel = self.underlyingModel 
-        r = binomialModel.interestRate
+        rho = binomialModel.interestRate
         
+        #Note that here we can multiply directly the vector by the float value.
+        #This is not the case for lists
         discountedValuesPortfolioAtCurrentTime = \
             self.getValuesPortfolioBackwardAtGivenTime(payoffFunction, currentTime, maturity) \
-            *((1+r)**(-(maturity - currentTime)))
+            *((1+rho)**(-(maturity - currentTime)))
         
         return discountedValuesPortfolioAtCurrentTime
 
@@ -279,9 +283,10 @@ class EuropeanOption:
         """
         
         binomialModel = self.underlyingModel 
-        r = binomialModel.interestRate
+        rho = binomialModel.interestRate
                
-        initialDiscountedValuePortfolio = self.getInitialValuePortfolio(payoffFunction, maturity)*(1+r)**(-maturity)
+        initialDiscountedValuePortfolio = self.getInitialValuePortfolio(payoffFunction, maturity)\
+            *(1+rho)**(-maturity)
         return initialDiscountedValuePortfolio
     
     
@@ -292,7 +297,7 @@ class EuropeanOption:
         replicate the payoff at maturity.
         
         Note that the values are given as a triangular matrix, since at time
-        k we have k +1 values of the strategy. 
+        k we have k + 1 values of the strategy. 
         
         Parameters
         ----------
@@ -303,11 +308,11 @@ class EuropeanOption:
 
         Returns
         -------
-        amountInRiskyAsset : list
+        amountInRiskyAsset : array
             a matrix describing how much money must be invested in the
             risky asset at any time before maturity in order to replicate the
             payoff at maturity.
-        amountInRiskFreeAsset : list
+        amountInRiskFreeAsset : array
             a matrix describing how much money must be invested in the
             risk free asset at any time before maturity in order to replicate the
             payoff at maturity.
@@ -315,8 +320,8 @@ class EuropeanOption:
         """
         binomialModel = self.underlyingModel
         
-        amountInRiskyAsset = np.empty((maturity,maturity)) 
-        amountInRiskFreeAsset = np.empty((maturity,maturity)) 
+        amountInRiskyAsset = np.full((maturity, maturity), math.nan) 
+        amountInRiskFreeAsset = np.full((maturity, maturity), math.nan) 
         
         u = binomialModel.increaseIfUp
         d = binomialModel.decreaseIfDown
@@ -361,11 +366,11 @@ class EuropeanOption:
 
         Returns
         -------
-        amountInRiskyAssetAtCurrentTime : list
+        amountInRiskyAssetAtCurrentTime : array
             a vector describing how much money must be invested in the
             risky asset at currentTime in order to replicate the payoff at
             maturity.
-        amountInRiskFreeAssetAtCurrentTime : list
+        amountInRiskFreeAssetAtCurrentTime : array
             a vector describing how much money must be invested in the
             risk free asset at currentTime in order to replicate the payoff at
             maturity.

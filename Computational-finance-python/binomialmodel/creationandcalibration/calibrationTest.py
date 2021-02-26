@@ -7,7 +7,7 @@ S(j+1)=dS(j) with probability d
 
 @author: Andrea Mazzon
 """
-from binomialmodel.creationandcalibration.binomialModelCalibration import BinomialModelCalibration
+from binomialModelCalibration import BinomialModelCalibration
 
 initialValue = 100.0
 decreaseIfDown = 0.6

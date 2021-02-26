@@ -17,7 +17,7 @@ initialValue = 3
 decreaseIfDown = 0.5
 increaseIfUp = 2
 numberOfTimes = 15
-numberOfSimulations = 100
+numberOfSimulations = 10000
 interestRate = 0
 
 #look how to construct an object in Python
@@ -25,10 +25,14 @@ myBinomialModel = BinomialModelMonteCarlo(initialValue, decreaseIfDown, increase
                                 numberOfTimes, numberOfSimulations, interestRate)    
 
 #we print the 10-th path of the process
-simulationNumber = 8;
+simulationNumber = 10;
 myBinomialModel.printPath(simulationNumber)
 
-myBinomialModel.plotPath(simulationNumber, 2)
+#and we plot some paths
+myBinomialModel.plotPaths(simulationNumber, 5)
+
+#discounted average of the process and probability of gains: 
+    
 #prints..
 myBinomialModel.printEvolutionDiscountedAverage()
 myBinomialModel.printEvolutionProbabilitiesOfGain()

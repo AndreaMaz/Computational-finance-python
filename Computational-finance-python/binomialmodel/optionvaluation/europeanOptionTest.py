@@ -41,12 +41,7 @@ print("The discounted price of the option computed going backward is ",
       priceFromStrategy)
 print()
 
-strategy = myPayoffEvaluator.getValuesPortfolioBackward(payoff, maturity)
-
 currentTime = maturity - 1
-
-tAmountInRiskyAsset, tAmountInRiskFreeAsset = myPayoffEvaluator.getStrategy(payoff, maturity)
-
 
 amountInRiskyAsset, amountInRiskFreeAsset = myPayoffEvaluator.getStrategyAtGivenTime(payoff, currentTime, maturity)
 

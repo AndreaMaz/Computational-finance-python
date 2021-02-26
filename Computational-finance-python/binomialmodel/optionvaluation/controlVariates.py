@@ -5,10 +5,12 @@
 """
 
 import math
+import numpy as np 
+import scipy.stats as st
+
 from binomialmodel.optionvaluation.americanOption import AmericanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
-import numpy as np 
-import scipy.stats as si
+
 from europeanOption import EuropeanOption
 
 
@@ -112,10 +114,10 @@ class AmericanOptionWithControlVariates:
         d2 = (np.log(initialValue / strike) + (r - 0.5 * sigma ** 2) * maturity) / \
             (sigma * np.sqrt(maturity))
     
-        callPrice = (initialValue * si.norm.cdf(d1, 0.0, 1.0) - \
-                     strike * np.exp(-r * maturity) * si.norm.cdf(d2, 0.0, 1.0))
-        putPrice = (strike * np.exp(-r * maturity) * si.norm.cdf(-d2, 0.0, 1.0) -\
-                    initialValue * si.norm.cdf(-d1, 0.0, 1.0))
+        callPrice = (initialValue * st.norm.cdf(d1, 0.0, 1.0) - \
+                     strike * np.exp(-r * maturity) * st.norm.cdf(d2, 0.0, 1.0))
+        putPrice = (strike * np.exp(-r * maturity) * st.norm.cdf(-d2, 0.0, 1.0) -\
+                    initialValue * st.norm.cdf(-d1, 0.0, 1.0))
         
         return callPrice, putPrice
 

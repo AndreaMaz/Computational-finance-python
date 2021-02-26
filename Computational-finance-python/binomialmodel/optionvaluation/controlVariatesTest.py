@@ -7,39 +7,36 @@ valuation of an american call and put option better.
 @author: Andrea Mazzon
 """
 
-import math
-from binomialmodel.optionvaluation.controlVariates import AmericanOptionWithControlVariates
-import numpy as np 
+from controlVariates import AmericanOptionWithControlVariates
 import matplotlib.pyplot as plt
 
-
+#parameters for the model
 initialValue = 1
 r = 0.02
 sigma = 0.7
-maturity = 3
 
+#paramteres for the option
+maturity = 3
 strike = initialValue
+
 
 maximumNumberOfTimes = 150
 
-americanCV = np.empty((maximumNumberOfTimes - 1))
-americanBinomial = np.empty((maximumNumberOfTimes - 1))
-european = np.empty((maximumNumberOfTimes - 1))
+americanCV = []
+americanBinomial =[]
+european = []
 
 
 for numberOfTimes in range (2, maximumNumberOfTimes + 1):
-
-    
-    interestRate = math.exp(r * maturity / numberOfTimes) - 1
     
     evaluator = AmericanOptionWithControlVariates(initialValue, r, sigma, maturity, strike) 
     
-    americanCV[numberOfTimes - 2] = evaluator.getAmericanCallAndPutPriceWithControlVariates(numberOfTimes)[1]
-    americanBinomial[numberOfTimes - 2] = evaluator.getAmericanCallAndPutPriceWithBinomialModel(numberOfTimes)[1]
-    european[numberOfTimes - 2] = evaluator.getEuropeanCallAndPutPriceWithBinomialModel(numberOfTimes)[1]
+    americanCV.append(evaluator.getAmericanCallAndPutPriceWithControlVariates(numberOfTimes)[1])
+    americanBinomial.append(evaluator.getAmericanCallAndPutPriceWithBinomialModel(numberOfTimes)[1])
+    european.append(evaluator.getEuropeanCallAndPutPriceWithBinomialModel(numberOfTimes)[1])
   
 blackScholesPrice = evaluator.blackScholesPriceCallAndPut()[1] 
-blackScholesVector = np.full((maximumNumberOfTimes - 1), blackScholesPrice)
+blackScholesVector = [blackScholesPrice] * (maximumNumberOfTimes - 1)
 
 plt.plot(americanCV)
 plt.plot(americanBinomial)

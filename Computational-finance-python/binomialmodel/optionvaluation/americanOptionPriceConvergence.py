@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Here we want to approximate the price of an american put option with maturity T and strike K,
-written on an underlying following the Black-Scholes model (i.e., having
-log-normal dynamics) with log-volatility sigma and risk-freee rate r. It can
-be seen that such a model can be approximated by a binomial model with N times,
-for N large enough, u = exp(sigma*sqrt(T/N)), d=1/u, rho = exp(rT/N)-1. 
+Here we want to approximate the price of an American put option with maturity T
+and strike K, written on an underlying following the Black-Scholes model (i.e., 
+having log-normal dynamics) with log-volatility sigma and risk-freee rate r. It
+can be seen that such a model can be approximated by a binomial model with N
+times, for N large enough, u = exp(sigma*sqrt(T/N)), d=1/u, rho = exp(rT/N)-1. 
 We then valuate the option under such a binomial model and hope that the price
 converges for large N.
 
 @author: Andrea Mazzon
 """
 import math
-from binomialmodel.optionvaluation.americanOption import AmericanOption
-from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
-import numpy as np 
 import matplotlib.pyplot as plt
+
+from americanOption import AmericanOption
+from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
+
 
 initialValue = 1
 r = 0.02
@@ -30,11 +31,11 @@ payoff = lambda x : max(initialValue - x,0)
 maximumNumberOfTimes = 150
 
 #we want to keep track of the prices and plot them
-prices = np.empty((maximumNumberOfTimes - 1))
+prices = []
 
 #we also want to keep track of how u and d evolve for increasing N
-increaseIfUps = np.empty((maximumNumberOfTimes - 1))
-decreaseIfDowns = np.empty((maximumNumberOfTimes - 1))
+increaseIfUps = []
+decreaseIfDowns = []
 
 for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     
@@ -42,8 +43,8 @@ for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     decreaseIfDown = 1/increaseIfUp
     
     #we keep track of how u and d evolve for increasing N
-    increaseIfUps[numberOfTimes - 2] = increaseIfUp
-    decreaseIfDowns[numberOfTimes - 2] = decreaseIfDown
+    increaseIfUps.append(increaseIfUp)
+    decreaseIfDowns.append(decreaseIfDown)
     
     interestRate = math.exp(r * maturity / numberOfTimes) - 1
     
@@ -52,7 +53,7 @@ for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     
     
     myPayoffEvaluator = AmericanOption(binomialmodel)
-    prices[numberOfTimes - 2] = myPayoffEvaluator.getValueOption(payoff, numberOfTimes - 1)
+    prices.append(myPayoffEvaluator.getValueOption(payoff, numberOfTimes - 1))
     
   
 plt.plot(prices)

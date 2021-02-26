@@ -21,6 +21,7 @@ class BinomialModelSmartWithLists(BinomialModel):
     attributing a (analytic!) probability to every realization. We then compute
     the average computing the weighted sum of the realizations with their probabilities.
     
+    The realizations of the process are stored in an list representing a matrix.
     ...
 
     Attributes
@@ -129,7 +130,8 @@ class BinomialModelSmartWithLists(BinomialModel):
             #to the last one, which is the previous last one times d
             realizationsAtTime = [self.decreaseIfDown * x for x in realizations[k - 1]]
             #the kth element of the list is a list representing the realizations
-            #at time k
+            #at time k: look at how we concatenate a list which is actually
+            #a singleton with another list
             realizations.append([highestRealization] + realizationsAtTime)
         return realizations
     
@@ -288,7 +290,8 @@ class BinomialModelSmartWithLists(BinomialModel):
             threshold = self.findThreshold(timeIndex)
             #we sum the probabilities corresponding to all the realizations with
             #enough ups k, and then we take the percentage
-            #we have + 1 because 0:n is 0,1,..,n-1
+            #we have + 1 because 0:n is 0,1,..,n-1. We want to consider all the
+            #realizations with anumber of downs <= timeIndex - threshold
             return 100.0 * sum(probabilities[0:timeIndex - threshold + 1])
     
 
@@ -313,6 +316,6 @@ class BinomialModelSmartWithLists(BinomialModel):
             probabilities = self.getProbabilitiesOfRealizationsAtGivenTime(timeIndex)
             realizations = self.getRealizationsAtGivenTime(timeIndex)  
             #we discount the weighted sum of the realizations
-            #use np.dot(a,b) to get the scalar product of two vectors lists a, b
+            #use np.dot(a,b) to get the scalar product of two vectors arrays a, b
             discountedAverage = (1 + self.interestRate)**(-timeIndex) * np.dot(probabilities, realizations)
             return discountedAverage

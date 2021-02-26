@@ -5,7 +5,7 @@
 """
 import math
 from scipy.optimize import fsolve
-from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
+from binomialModelSmart import BinomialModelSmart
 from binomialmodel.optionvaluation.europeanOption import EuropeanOption
 
 

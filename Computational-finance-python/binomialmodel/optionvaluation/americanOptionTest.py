@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-In this class we test the computation of the price of an american option written
-on a binomial model
+In this class we test the computation of the price of an american call 
+option written on a binomial model
 
 @author: Andrea Mazzon
 """
 
-from binomialmodel.optionvaluation.americanOption import AmericanOption
+from americanOption import AmericanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
+
 
 initialValue = 20
 decreaseIfDown = 0.9

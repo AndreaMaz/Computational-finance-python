@@ -101,7 +101,7 @@ class BinomialModel(metaclass=abc.ABCMeta):
   
     @abc.abstractmethod
     def generateRealizations(self):
-        """It computes the realizations of the process.
+        """It generates the realizations of the process.
         """
         
         

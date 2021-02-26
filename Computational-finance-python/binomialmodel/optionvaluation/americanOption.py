@@ -73,7 +73,7 @@ class AmericanOption:
         binomialModel = self.underlyingProcess 
         
         q = binomialModel.riskNeutralProbabilityUp
-        r = binomialModel.interestRate
+        rho = binomialModel.interestRate
         
         #we proceed backwards: we start from the payoff 
         processRealizations = binomialModel.getRealizationsAtGivenTime(maturity)
@@ -95,7 +95,7 @@ class AmericanOption:
             #the money we get if we wait: 
             #V(j,k)=qV(j+1,k+1)+(1-q)V(j+1,k+1), where j is time and k the number
             #of ups up to time
-            valuationPart = [(q * x + (1 - q) * y)/(1+r) for x,y in 
+            valuationPart = [(q * x + (1 - q) * y)/(1+rho) for x,y in 
                               zip(valuesOption[:-1],  valuesOption[1:])]    
             
             #and then we take the maximums: these are the current values of the option
@@ -139,7 +139,7 @@ class AmericanOption:
         
         binomialModel = self.underlyingProcess 
         q = binomialModel.riskNeutralProbabilityUp
-        r = binomialModel.interestRate
+        rho = binomialModel.interestRate
         
         #here we store everything in some matrices, since we want to return
         #all the values over time. Of course, if we only want the price
@@ -169,8 +169,8 @@ class AmericanOption:
             #the money we get if we wait: 
             #V(j,k)=qV(j+1,k+1)+(1-q)V(j+1,k+1), where j is time and k the number
             #of ups up to time
-            valuationPart = q/(1+r) * valuesOption[timeIndexBackward + 1, 0:(timeIndexBackward + 1)] + \
-                (1-q)/(1+r) * valuesOption[timeIndexBackward + 1, 1:(timeIndexBackward + 2)]
+            valuationPart = q/(1+rho) * valuesOption[timeIndexBackward + 1, 0:(timeIndexBackward + 1)] + \
+                (1-q)/(1+rho) * valuesOption[timeIndexBackward + 1, 1:(timeIndexBackward + 2)]
                 
      
             #and then we take the maximums: these are the current values of the option
