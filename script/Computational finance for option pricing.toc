@@ -1,0 +1,11 @@
+\beamer@sectionintoc {1}{Monte-Carlo method for option pricing and variance reduction techniques}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{The Monte-Carlo method: motivation and a brief overview}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{Variance reduction techniques}{13}{0}{1}
+\beamer@subsubsectionintoc {1}{2}{1}{Introduction}{14}{0}{1}
+\beamer@subsubsectionintoc {1}{2}{2}{Antithetic variables}{18}{0}{1}
+\beamer@subsubsectionintoc {1}{2}{3}{Control variates}{28}{0}{1}
+\beamer@sectionintoc {2}{Option pricing under the Binomial model}{31}{0}{2}
+\beamer@subsectionintoc {2}{1}{Motivation and setting}{32}{0}{2}
+\beamer@subsectionintoc {2}{2}{Simulation of the Binomial model}{41}{0}{2}
+\beamer@subsectionintoc {2}{3}{Calibration of the Binomial model}{57}{0}{2}
+\beamer@subsectionintoc {2}{4}{American options valuation}{61}{0}{2}
