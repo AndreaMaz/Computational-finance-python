@@ -36,6 +36,9 @@ class GenerateBlackScholes:
         the standard deviation
     r : float
         the interest rate. Default = 0  
+    seed : int
+        the seed to generate the sequence both with standard Monte Carlo and
+        Antithetic variables. Default = None 
 
     Methods
     -------
@@ -48,8 +51,8 @@ class GenerateBlackScholes:
     """
     
      #Python specific syntax for the constructor
-    def __init__(self, numberOfSimulations, T, initialValue, sigma,
-                 r = 0):#r = 0 if not specified
+    def __init__(self, numberOfSimulations, T, initialValue, sigma, r = 0,#r = 0 if not specified
+                 seed = None):#no seed if not specified
         """    
         Parameters
         ----------
@@ -63,12 +66,21 @@ class GenerateBlackScholes:
             the standard deviation
         r : float
             the interest rate. Default = 0
+        seed : int
+            the seed to generate the sequence both with standard Monte Carlo and
+            Antithetic variables. Default = None 
         """
         self.numberOfSimulations = numberOfSimulations
         self.T = T
         self.initialValue = initialValue
         self.sigma = sigma
+        self.seed = seed
         self.r = r
+        #we give the seed for the random number generator. Note that if we specify
+        #no seed at all, self.seed will have value None, that is, no value (like
+        #Null in Java). In this case, it will call np.random.seed(). Indeed,
+        #the value of the seed is a default argument in np.random.seed
+        np.random.seed(self.seed)
         
         
     def generateRealizations(self):
@@ -86,11 +98,12 @@ class GenerateBlackScholes:
             a vector representing the realizations of the process
 
         """
+                    
         #note the way to get a given number of realizations of a standard normal
         #random variable. Also note that in order to access the specific field of the
         #the class, we have to refer to it with "self.". Same things for methods
         standardNormalRealizations = np.random.standard_normal(self.numberOfSimulations)
-        
+
         #we don't want to compute this every time.
         firstPart = self.initialValue * math.exp((self.r - 0.5 * self.sigma**2) * self.T)
         
@@ -123,6 +136,7 @@ class GenerateBlackScholes:
             a vector representing the realizations of the process
 
         """
+        
         
         #math.ceil(x) returns the smallest integer >= x
         standardNormalRealizations = np.random.standard_normal(math.ceil(self.numberOfSimulations/2))

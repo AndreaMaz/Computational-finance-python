@@ -27,15 +27,16 @@ strike = initialValue
 #we want to test the two methods for different numbers of simulations
 numbersSimulations = [10**k for k in range(3,6)]
 
-#the function compare returns a 2-uple. The first value is the average error of the
-#standard Monte-Carlo method, so it is the entry of the 2-uple at position 0.
-averageErrorsWithStandardMC = [compare(numberOfSimulations, initialValue, r, sigma, T, strike)[0] \
-    for numberOfSimulations in numbersSimulations]
-    
-#The second value returned by compare is the average error of the Monte-Carlo
-#method with Antithetic Variables, so it is the entry of the 2-uple at position 1.
-averageErrorsWithAV = [compare(numberOfSimulations, initialValue, r, sigma, T, strike)[1] \
-    for numberOfSimulations in numbersSimulations]
+averageErrorsWithStandardMC = []
+averageErrorsWithAV = []
+
+for numberOfSimulations in numbersSimulations:
+    #the function compare returns a 2-uple. The first value is the average error of the
+    #standard Monte-Carlo method, the second one the one with Antithetic variables
+    averageErrorWithStandardMC, averageErrorWithAV = \
+        compare(numberOfSimulations,initialValue, sigma, T, strike, r)
+    averageErrorsWithStandardMC.append(averageErrorWithStandardMC) 
+    averageErrorsWithAV.append(averageErrorWithAV)
    
 plt.plot(numbersSimulations,averageErrorsWithStandardMC, 'bo')
 plt.plot(numbersSimulations,averageErrorsWithAV, 'ro')

@@ -238,9 +238,9 @@ class ControlVariatesCliquetBS:
         #the option in the case where there is no truncation of the final sum:
         
     
-        #first the Monte-Carlo price: we set extreme floor and cap
-        globalFloorForNonTruncatedSum = - numberOfIntervals * 100000
-        globalCapForNonTruncatedSum = numberOfIntervals * 100000
+        #first the Monte-Carlo price: see here two ways to represent infinity
+        globalFloorForNonTruncatedSum = - np.inf
+        globalCapForNonTruncatedSum = float('inf')
         
         cliquetOptionForNonTruncatedSum = CliquetOption(numberOfSimulations, T, lF, lC,
                                                         globalFloorForNonTruncatedSum, 

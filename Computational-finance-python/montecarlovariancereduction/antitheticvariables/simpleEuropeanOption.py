@@ -3,7 +3,7 @@
 """
 @author: Andrea Mazzon
 """
-from statistics import mean
+import numpy as np
 import math
 
 class SimpleEuropeanOption:
@@ -97,9 +97,9 @@ class SimpleEuropeanOption:
 
         """
         payoffRealizations = self.getPayoff(payoffFunction)
-        #look at the use of statistics.mean: we get the average of the elements
+        #look at the use of numpy.mean: we get the average of the elements
         #of a list
-        return math.exp(-self.r * maturity) * mean(payoffRealizations)
+        return math.exp(-self.r * maturity) * np.mean(payoffRealizations)
     
     
     def printPrice(self, payoffFunction, maturity):

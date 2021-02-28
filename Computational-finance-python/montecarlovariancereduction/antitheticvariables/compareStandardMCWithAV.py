@@ -7,18 +7,15 @@ on a Black-Scholes model.
     
 @author: Andrea Mazzon
 """
+import numpy as np
+from statistics import mean
 
 from generateBlackScholes import GenerateBlackScholes
 from simpleEuropeanOption import SimpleEuropeanOption
 from analyticformulas.analyticFormulas import blackScholesPriceCall
-
-import numpy as np
-from statistics import mean
-
+        
     
-    
-    
-def compare(numberOfSimulations, initialValue, r, sigma, T, strike):
+def compare(numberOfSimulations, initialValue, sigma, T, strike, r = 0):
     """
     It returns the average errors in the valuation of the call option we get
     using the standard Monte-Carlo method and the Monte-Carlo method with
@@ -50,11 +47,11 @@ def compare(numberOfSimulations, initialValue, r, sigma, T, strike):
 
     """
         
-    numberOfTests = 10
+    numberOfTests = 100
     
     
     #the two lists that will contain our average errors for the different tests
-    errorsStandardMonteCarlo = [] 
+    errorsStandardMonteCarlo = []
     errorsMonteCarloWithAV = []
     
     #our benchmark: the analytic price of the call option
@@ -67,6 +64,7 @@ def compare(numberOfSimulations, initialValue, r, sigma, T, strike):
     #def payoff(x):
     #    return max(x - initialValue, 0)
     
+    #note how to construct an object of a class
     blackScholesGenerator = GenerateBlackScholes(numberOfSimulations, T, initialValue, sigma, r)     
     
     #k=0,..,numberOfTests - 1

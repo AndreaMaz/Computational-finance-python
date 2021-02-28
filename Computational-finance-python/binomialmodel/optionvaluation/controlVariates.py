@@ -6,7 +6,7 @@
 
 import math
 import numpy as np 
-import scipy.stats as st
+import scipy.stats as stat
 
 from binomialmodel.optionvaluation.americanOption import AmericanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
@@ -114,10 +114,10 @@ class AmericanOptionWithControlVariates:
         d2 = (np.log(initialValue / strike) + (r - 0.5 * sigma ** 2) * maturity) / \
             (sigma * np.sqrt(maturity))
     
-        callPrice = (initialValue * st.norm.cdf(d1, 0.0, 1.0) - \
-                     strike * np.exp(-r * maturity) * st.norm.cdf(d2, 0.0, 1.0))
-        putPrice = (strike * np.exp(-r * maturity) * st.norm.cdf(-d2, 0.0, 1.0) -\
-                    initialValue * st.norm.cdf(-d1, 0.0, 1.0))
+        callPrice = (initialValue * stat.norm.cdf(d1, 0.0, 1.0) - \
+                     strike * np.exp(-r * maturity) * stat.norm.cdf(d2, 0.0, 1.0))
+        putPrice = (strike * np.exp(-r * maturity) * stat.norm.cdf(-d2, 0.0, 1.0) -\
+                    initialValue * stat.norm.cdf(-d1, 0.0, 1.0))
         
         return callPrice, putPrice
 

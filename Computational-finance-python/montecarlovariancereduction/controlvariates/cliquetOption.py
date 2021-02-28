@@ -4,7 +4,7 @@
 @author: Andrea Mazzon
 """
 
-from statistics import mean
+from numpy import mean
 from math import exp
 
 class CliquetOption:
