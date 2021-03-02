@@ -96,11 +96,10 @@ class GenerateBSReturns:
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
         
-        #this will also be a matrix!
-        for k in range (self.numberOfSimulations):
-            standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
-            blackScholesReturns[k] = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
-                for x in standardNormalRealizations]
+        standardNormalRealizations = \
+            np.random.standard_normal(size=(self.numberOfSimulations,self.numberOfIntervals))
+        
+        blackScholesReturns = firstPart * np.exp(self.sigma * math.sqrt(lenghthOfIntervals) * standardNormalRealizations)
             
         return blackScholesReturns
        
@@ -126,16 +125,13 @@ class GenerateBSReturns:
         
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
-        
-        #we generate the standard normal random generations only N/2 times
-        for k in range (halfSimulations):
-            standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
-            #we define two rows: one for the generated realization, one for their
-            #opposite
-            blackScholesReturns[k] = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
-                for x in standardNormalRealizations]
-            blackScholesReturns[k+halfSimulations] =  \
-                    [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * (-x)) \
-                         for x in standardNormalRealizations] 
+        standardNormalRealizations = \
+            np.random.standard_normal(size=(halfSimulations,self.numberOfIntervals))
+
+
+        firstBlackScholesReturns = firstPart * np.exp(self.sigma * math.sqrt(lenghthOfIntervals) * standardNormalRealizations)
+        secondBlackScholesReturns = firstPart * np.exp(self.sigma * math.sqrt(lenghthOfIntervals) * (-standardNormalRealizations))
+
+        blackScholesReturns = np.concatenate((firstBlackScholesReturns, secondBlackScholesReturns))
                
         return blackScholesReturns
