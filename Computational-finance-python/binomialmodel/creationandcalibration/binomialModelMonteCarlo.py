@@ -150,7 +150,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         
         Returns
         -------
-        upsAndDowns : list
+        upsAndDowns : array
             a matrix whose single entry is u > rho + 1 if a (pseudo)
             random number R in (0,1) is smaller than q and d<1 if R>q.
         """
@@ -160,15 +160,11 @@ class BinomialModelMonteCarlo(BinomialModel):
         
         q = self.riskNeutralProbabilityUp
         
-        upsAndDowns = []
+        randomNumbers = np.random.uniform(0,1,size = (self.numberOfTimes, self.numberOfSimulations))
         
-        for timeIndex in range(self.numberOfTimes):
-            # we generate a number N = self.numberOfSimulations of (pseudo)
-            #random numbers with uniform distribution in (0,1)
-            randomNumbers = np.random.uniform(0,1,self.numberOfSimulations)
-            #note the ternary conditional operator in Python
-            upsAndDownsAtTime = [u if x < q else d for x in randomNumbers]
-            upsAndDowns.append(upsAndDownsAtTime)
+        #ternary operator applied to matrices
+        upsAndDowns = np.where(randomNumbers < q, u, d)
+
         return upsAndDowns
 
 
@@ -186,7 +182,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         array
             The matrix hosting the realizations of the process.
         """
-        #maybe, in this case, it is bettere dealing with arrays instead of lists.
+        #maybe, in this case, it is better dealing with arrays instead of lists.
         #If realizations are hosted in an array, it's easier to perform
         #operations with them: for example, remember that when you sum or
         #multiply two lists, the operation is not executed component-wise.
@@ -196,13 +192,8 @@ class BinomialModelMonteCarlo(BinomialModel):
         realizations[0] = [self.initialValue] * self.numberOfSimulations
         upsAndDowns = self.getUpsAndDowns()
         for timeIndex in range(1,self.numberOfTimes):
-            for simulationIndex in range(self.numberOfSimulations):
                 #S[i+1,j] = upsAndDowns[i,j]S[i,j]
-                realizations[timeIndex, simulationIndex] = \
-                    realizations[timeIndex - 1, simulationIndex]  * \
-                        upsAndDowns[timeIndex - 1][simulationIndex]
-                        #note above a different syntax to access an element
-                        #of an array and of a list
+             realizations[timeIndex] = realizations[timeIndex - 1] * upsAndDowns[timeIndex - 1]
         return realizations            
   
     
