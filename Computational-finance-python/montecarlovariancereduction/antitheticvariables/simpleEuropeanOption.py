@@ -3,7 +3,7 @@
 """
 @author: Andrea Mazzon
 """
-import numpy as np
+from numpy import mean
 import math
 
 class SimpleEuropeanOption:
@@ -23,7 +23,9 @@ class SimpleEuropeanOption:
     Attributes
     ----------
     processRealizations : list
-        vector reresenting the realizations of the process at maturity   
+        vector reresenting the realizations of the process at maturity
+    r : float
+        interest rate
         
 
     Methods
@@ -66,8 +68,9 @@ class SimpleEuropeanOption:
             the realizations of the payoff
 
         """
+        #processRealizations[i] -> payoffFunction(processRealizations[i])
         #look at this peculiar Python for loop: this is equivalent to write
-        #for k in range (self.processRealizations.length)
+        #for k in range (self.processRealizations.length) K=0,1,2,...,self.processRealizations.length-1
         #    payoffRealizations[k] = payoffFunction(self.processRealizations[k])
         #The part (fox x in self.processRealizations) is similar to the Java foreach.
         #loop. 
@@ -99,7 +102,7 @@ class SimpleEuropeanOption:
         payoffRealizations = self.getPayoff(payoffFunction)
         #look at the use of numpy.mean: we get the average of the elements
         #of a list
-        return math.exp(-self.r * maturity) * np.mean(payoffRealizations)
+        return math.exp(-self.r * maturity) * mean(payoffRealizations)
     
     
     def printPrice(self, payoffFunction, maturity):

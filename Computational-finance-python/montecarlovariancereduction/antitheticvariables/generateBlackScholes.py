@@ -74,13 +74,12 @@ class GenerateBlackScholes:
         self.T = T
         self.initialValue = initialValue
         self.sigma = sigma
-        self.seed = seed
         self.r = r
         #we give the seed for the random number generator. Note that if we specify
         #no seed at all, self.seed will have value None, that is, no value (like
         #Null in Java). In this case, it will call np.random.seed(). Indeed,
         #the value of the seed is a default argument in np.random.seed
-        np.random.seed(self.seed)
+        np.random.seed(seed)
         
         
     def generateRealizations(self):
@@ -107,13 +106,15 @@ class GenerateBlackScholes:
         #we don't want to compute this every time.
         firstPart = self.initialValue * math.exp((self.r - 0.5 * self.sigma**2) * self.T)
         
+        def BSFunction(x):
+            return firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
+        
         #look at this peculiar Python for loop: this is equivalent to write
         #for k in range (standardNormalRealizations.length)
         #    blackScholesRealizations[k] = firstPart * math.exp(self.sigma * math.sqrt(self.T) * blackScholesRealizations[k])
         #The part (fox x in self.processRealizations) is similar to the Java foreach.
         #loop. 
-        blackScholesRealizations = [firstPart * math.exp(self.sigma * math.sqrt(self.T) * x) \
-            for x in standardNormalRealizations]
+        blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations]
             
         return blackScholesRealizations
        

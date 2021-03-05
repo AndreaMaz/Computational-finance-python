@@ -9,13 +9,13 @@ import numpy as np
 import math
 
 from analyticformulas.analyticFormulas import blackScholesPriceCall
-from cliquetOption import CliquetOption
+from cliquetOptionForCV import CliquetOptionForCV
 from generateBSReturns import GenerateBSReturns
 
 
 
 
-class ControlVariatesCliquetBS:
+class FasterControlVariatesCliquetBS:
     """
     This class is designed to compute the payoff of a Cliquet option written
     on a Black-Scholes model, with control variates.
@@ -89,7 +89,7 @@ class ControlVariatesCliquetBS:
     """
     
     def __init__(self, numberOfSimulations, maturity, numberOfIntervals, 
-                 localFloor, localCap, globalFloor, globalCap, sigma, r):
+                 localFloor, localCap,  globalFloor, globalCap, sigma, r):
         """
         Parameters
         ----------
@@ -156,7 +156,6 @@ class ControlVariatesCliquetBS:
 
         """
         
-        #the options are at the money: we are considering an option on the return
         initialValue = 1
         
         maturityOfTheCallOptions = self.maturity/self.numberOfIntervals
@@ -178,16 +177,14 @@ class ControlVariatesCliquetBS:
                                                maturityOfTheCallOptions, secondStrike)\
             * discountFactorBlackScholes
         
-        #we repeat the same over all the time intervals, so we multiply by
-        #their number
-        price = self.numberOfIntervals * (self.localFloor + firstCallPrice - secondCallPrice)
-        
-        #we now discount the price with respect to the maturity of the Cliquet
+        #we now discount the price with respect to the maturoty of the Cliquet
         #option
         discountFactorCliquetOption = math.exp(- self.r * self.maturity)
         
-        
-        return discountFactorCliquetOption * price
+        #we repeat the same over all the time intervals, so we multiply by
+        #their number
+        return discountFactorCliquetOption * self.numberOfIntervals \
+             * (self.localFloor + firstCallPrice - secondCallPrice)
     
     
     def getPriceViaControlVariates(self):  
@@ -226,34 +223,25 @@ class ControlVariatesCliquetBS:
                                         T, sigma, r)
         
         returnsRealizations = generator.generateReturns()
+        
+        cliquetOption = CliquetOptionForCV(numberOfSimulations, T, lF, lC)
 
-        cliquetOption = CliquetOption(numberOfSimulations, T, lF, lC, gF, gC)
-
-        #first we get the Monte-Carlo price of the option..
+        #first we get the Monte-Carlo prices of the option, both for the truncated
+        #and not truncated sum. First of all, we can use a single object to do
+        #the valuations. Moreover, thanks to the fact that we generate the 
+        #truncated returns only once, we basically halve the computation time 
         discountedPriceOfTheOptionMC = \
-            cliquetOption.discountedPriceOfTheOption(returnsRealizations, r)
-        
-        #..and then we want to get the analytic price and the Monte-Carlo price of
-        #the option in the case where there is no truncation of the final sum:
-        
-    
-        #first the Monte-Carlo price: see here two ways to represent infinity
-        globalFloorForNonTruncatedSum = - np.inf
-        globalCapForNonTruncatedSum = float('inf')
-        
-        cliquetOptionForNonTruncatedSum = CliquetOption(numberOfSimulations, T, lF, lC,
-                                                        globalFloorForNonTruncatedSum, 
-                                                        globalCapForNonTruncatedSum)
+            cliquetOption.discountedPriceOfTheOption(returnsRealizations, r, gF, gC)
         
         discountedPriceNonTruncatedSumMC = \
-            cliquetOptionForNonTruncatedSum.discountedPriceOfTheOption(returnsRealizations, r)    
-        
+            cliquetOption.discountedPriceOfTheOption(returnsRealizations, r)    
+
         #and now the analytic value
         analyticPriceOfNonTruncatedSum = self.getAnalyticPriceOfNonTruncatedSum()
         
-        #now we want to computre the optimal beta, see the script
-        payoffsWhenTruncated = cliquetOption.getPayoffs(returnsRealizations)
-        payoffsWhenNotTruncated = cliquetOptionForNonTruncatedSum.getPayoffs(returnsRealizations)  
+        #now we want to compute the optimal beta, see the script
+        payoffsWhenTruncated = cliquetOption.getPayoffs(returnsRealizations, gF, gC)
+        payoffsWhenNotTruncated = cliquetOption.getPayoffs(returnsRealizations)  
 
         covarianceMatrix = np.cov(payoffsWhenTruncated, payoffsWhenNotTruncated)
         
@@ -262,3 +250,4 @@ class ControlVariatesCliquetBS:
         #and we return the price with control variates
         return discountedPriceOfTheOptionMC \
             - optimalChoice * (discountedPriceNonTruncatedSumMC - analyticPriceOfNonTruncatedSum)
+

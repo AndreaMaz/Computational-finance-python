@@ -69,7 +69,8 @@ class AmericanOption:
             the value of the option.
 
         """
-        
+        #here it is done with lists, also to show you some features like zip.
+        #you can change it to arrays.
         binomialModel = self.underlyingProcess 
         
         q = binomialModel.riskNeutralProbabilityUp
@@ -173,9 +174,10 @@ class AmericanOption:
                 (1-q)/(1+rho) * valuesOption[timeIndexBackward + 1, 1:(timeIndexBackward + 2)]
                 
      
-            #and then we take the maximums: these are the current values of the option
+            #and then we take the maximums: these are the current values of the option  
+            
             valuesOption[timeIndexBackward, 0:timeIndexBackward + 1] =\
-                [max(x,y) for x,y in zip(optionPart, valuationPart)]      
+                np.maximum(optionPart, valuationPart)  
             
             valuesExercise[timeIndexBackward, 0:timeIndexBackward + 1] = optionPart
             
@@ -183,7 +185,7 @@ class AmericanOption:
             
             #this identifies the exercise region
             exercise[timeIndexBackward, 0:timeIndexBackward + 1] = \
-                [x > y for x,y in zip(optionPart, valuationPart)]
+                optionPart > valuationPart
                 
         
         return valuesOption, valuesExercise, valuesIfWait, exercise

@@ -49,16 +49,10 @@ class BinomialModelMonteCarlo(BinomialModel):
         a matrix containing the realizations of the process    
     numberOfSimulations : int
         the number of simulated trajectories of the process
-    seed : int
-        the seed to give to generate the sequence of (pseudo) random numbers
-        which we use to generate the realizations of the process
-        
-        
+   
 
     Methods
     -------
-    generateRealizations()
-        It generates and returns the matrix representing the realizations of the process.
     getRealizationsAtGivenTime(timeIndex)
         It returns the realizations of the process at time timeIndex
     getRealizations()
@@ -133,7 +127,6 @@ class BinomialModelMonteCarlo(BinomialModel):
             the seed to give to generate the sequence of (pseudo) random numbers
             which we use to generate the realizations of the process
          """
-        self.mySeed = mySeed
         self.numberOfSimulations = numberOfSimulations
         seed(mySeed)
         super().__init__(initialValue, decreaseIfDown, increaseIfUp,
@@ -316,11 +309,15 @@ class BinomialModelMonteCarlo(BinomialModel):
 
         """
         realizationsAtTimeIndex = self.getRealizationsAtGivenTime(timeIndex)
-        #another use of this peculiar Python syntax: here we return a list whose j-th element
-        #is 1 if S(0)*(1+rho)^timeIndex <= S[timeIndex,j] and 0 otherwise.
-        #This is done by converting booleans into numbers.
-        zeroAndOnes = [int(self.initialValue*((1+self.interestRate)**timeIndex) <= x)
-                              for x in realizationsAtTimeIndex]
+       
+        #see how to convert booleans into numbers.   
+        
+        booleans = self.initialValue*((1+self.interestRate)**timeIndex) <= realizationsAtTimeIndex
+        zeroAndOnes = booleans.astype(int)        
+         
+        #or:
+        #zeroAndOnes = [int(self.initialValue*((1+self.interestRate)**timeIndex) <= x)
+        #                     for x in realizationsAtTimeIndex]'
         #we the return the percentage
         return 100 * np.mean(zeroAndOnes)
 
@@ -355,13 +352,9 @@ class BinomialModelMonteCarlo(BinomialModel):
             a list representing the evolution of the maximum of the realizations of the
             process at given times.
         """
-        evolutionMaximum = np.empty((self.numberOfTimes - 1))
-
-        for timeIndex in range(0, self.numberOfTimes - 1):
-            evolutionMaximum[timeIndex] = self.getMaximumAtGivenTime(timeIndex)
+       
+        return [self.getMaximumAtGivenTime(timeIndex) for timeIndex in range(self.numberOfTimes - 1)]
         
-        return evolutionMaximum
-
     
     def printEvolutionMaximum(self):
         """
@@ -374,8 +367,9 @@ class BinomialModelMonteCarlo(BinomialModel):
 
         """
         evolutionMaximum = self.getEvolutionMax();
+        print(evolutionMaximum)
 
-        print("The path of the maximum evolution is the following:/n")
+        print("The path of the maximum evolution is the following:")
         print()
         print('\n'.join('{:.3}'.format(max) for max in evolutionMaximum))
         print()

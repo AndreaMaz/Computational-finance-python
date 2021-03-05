@@ -128,6 +128,7 @@ class BinomialModelSmartWithLists(BinomialModel):
             highestRealization = self.increaseIfUp * realizations[k - 1][0]
             #the second is the previous first realization times d, and so on up
             #to the last one, which is the previous last one times d
+            # here we cannot multiply directly by the vector, because it is a list
             realizationsAtTime = [self.decreaseIfDown * x for x in realizations[k - 1]]
             #the kth element of the list is a list representing the realizations
             #at time k: look at how we concatenate a list which is actually

@@ -17,6 +17,7 @@ import time
 
 from cliquetOption import CliquetOption
 from controlVariatesCliquetBS import ControlVariatesCliquetBS
+from fasterControlVariatesCliquetBS import FasterControlVariatesCliquetBS
 from generateBSReturns import GenerateBSReturns
 
 
@@ -33,35 +34,44 @@ localFloor = -0.05
 localCap = 0.3
 
 globalFloor = 0
-globalCap = numberOfTimeIntervals * 0.1
+globalCap = numberOfTimeIntervals * 0.3
 
 #Monte Carlo parameter
 
 numberOfSimulations = 10000
+
+
+
+#the object to generate the returns
+generator = GenerateBSReturns(numberOfSimulations, numberOfTimeIntervals,
+                                        maturity, sigma, r)
 
 #we want to compute the price with the standard Cliquet option implementation..
 cliquetOption = CliquetOption(numberOfSimulations, maturity, localFloor, localCap, globalFloor, globalCap)
 
 #..and with control variates
 cliquetWithControlVariates = \
-    ControlVariatesCliquetBS(numberOfSimulations,maturity, numberOfTimeIntervals, 
-                 localFloor, localCap, globalCap, globalFloor, sigma, r)
+ControlVariatesCliquetBS(numberOfSimulations,maturity, numberOfTimeIntervals, 
+             localFloor, localCap, globalFloor, globalCap,  sigma, r)
 
-#the object to generate the returns
-generator = GenerateBSReturns(numberOfSimulations, numberOfTimeIntervals,
-                                        maturity, sigma, r)
-
+#..and with control variates
+fasterCliquetWithControlVariates = \
+FasterControlVariatesCliquetBS(numberOfSimulations,maturity, numberOfTimeIntervals, 
+             localFloor, localCap, globalFloor, globalCap,  sigma, r)
 numberOfTests = 30
 
 pricesStandard = []
 pricesAV = []
 pricesCV = []
+pricesFasterCV = []
 
 timesStandard = []
 timesAV = []
 timesCV = []
+timesFasterCV = []
 
 for k in range(numberOfTests):
+    
     #first we do it via standard Monte-Carlo
     start = time.time()
     returnsRealizations = generator.generateReturns()   
@@ -78,14 +88,21 @@ for k in range(numberOfTests):
     pricesAV.append(priceAV)        
     timesAV.append(end - start)
    
-    #and finally with control variates     
+    #the with control variates     
     start = time.time()
     priceCV = cliquetWithControlVariates.getPriceViaControlVariates()  
     end = time.time()
     pricesCV.append(priceCV)
     timesCV.append(end - start)
     
-print() 
+    #and finally with the faster control variates     
+    start = time.time()
+    priceFasterCV = fasterCliquetWithControlVariates.getPriceViaControlVariates()  
+    end = time.time()
+    pricesFasterCV.append(priceFasterCV)
+    timesFasterCV.append(end - start)
+    
+print()
 print("The variance of the prices using standard Monte-Carlo is ", np.var(pricesStandard))
 
 print() 
@@ -95,6 +112,9 @@ print()
 print("The variance of the prices using Control variates is ", np.var(pricesCV) )
 
 print() 
+print("The variance of the prices using the faster Control variates is ", np.var(pricesFasterCV) )
+
+print() 
 print("The average elapsed time using standard Monte-Carlo is ", np.mean(timesStandard))
 
 print() 
@@ -102,3 +122,6 @@ print("The average elapsed time using Antithetic variables is ", np.mean(timesAV
 
 print() 
 print("The average elapsed time using Control variates is ", np.mean(timesCV) )
+
+print() 
+print("The average elapsed time using the faster Control variates is ", np.mean(timesFasterCV) )

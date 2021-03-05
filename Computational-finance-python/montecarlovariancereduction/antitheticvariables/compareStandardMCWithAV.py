@@ -65,11 +65,13 @@ def compare(numberOfSimulations, initialValue, sigma, T, strike, r = 0):
     #    return max(x - initialValue, 0)
     
     #note how to construct an object of a class
-    blackScholesGenerator = GenerateBlackScholes(numberOfSimulations, T, initialValue, sigma, r)     
-    
+            
+    blackScholesGenerator = GenerateBlackScholes(numberOfSimulations, T, initialValue, sigma, r)
     #k=0,..,numberOfTests - 1
     for k in range(numberOfTests):
     
+            
+
         #first, the valuation with the standard Monte-Carlo:
         realizationsOfTheProcessWithStandardMC = blackScholesGenerator.generateRealizations()
     

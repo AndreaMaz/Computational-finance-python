@@ -25,12 +25,12 @@ strike = initialValue
 
 
 #we want to test the two methods for different numbers of simulations
-numbersSimulations = [10**k for k in range(3,6)]
+numbersOfSimulations = [10**k for k in range(3,6)]
 
 averageErrorsWithStandardMC = []
 averageErrorsWithAV = []
 
-for numberOfSimulations in numbersSimulations:
+for numberOfSimulations in numbersOfSimulations:
     #the function compare returns a 2-uple. The first value is the average error of the
     #standard Monte-Carlo method, the second one the one with Antithetic variables
     averageErrorWithStandardMC, averageErrorWithAV = \
@@ -38,8 +38,8 @@ for numberOfSimulations in numbersSimulations:
     averageErrorsWithStandardMC.append(averageErrorWithStandardMC) 
     averageErrorsWithAV.append(averageErrorWithAV)
    
-plt.plot(numbersSimulations,averageErrorsWithStandardMC, 'bo')
-plt.plot(numbersSimulations,averageErrorsWithAV, 'ro')
+plt.plot(numbersOfSimulations,averageErrorsWithStandardMC, 'bo')
+plt.plot(numbersOfSimulations,averageErrorsWithAV, 'ro')
 plt.xlabel('Number of simulations')
 plt.ylabel('Average error')
 plt.title('Average errors in the valuation of a call option for standard Monte-Carlo and Antithetic Variables methods')

@@ -145,7 +145,7 @@ class BinomialModelSmart(BinomialModel):
             realizations[k, 0] = self.increaseIfUp * realizations[k - 1, 0]
             #the second is the previous first realization times d, and so on up
             #to the last one, which is the previous last one times d
-            realizationsAtTime = [self.decreaseIfDown * x for x in realizations[k - 1, 0:k]]
+            realizationsAtTime = self.decreaseIfDown * realizations[k - 1, 0:k]
             realizations[k, 1:k+1] = realizationsAtTime
         return realizations
     
@@ -268,7 +268,7 @@ class BinomialModelSmart(BinomialModel):
         """
         rho = self.interestRate
         u = self.increaseIfUp
-        d=self.decreaseIfDown
+        d = self.decreaseIfDown
         return math.ceil(math.log(((1+rho)/d)**timeIndex,u/d))
         
     

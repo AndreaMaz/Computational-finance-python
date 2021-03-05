@@ -334,14 +334,15 @@ class EuropeanOption:
                 self.getValuesDiscountedPortfolioBackwardAtGivenTime(payoffFunction, timeIndexBackward + 1, maturity)
             
             currentAmountInRiskyAsset = \
-            [(portfolioAtNextTime[k]-portfolioAtNextTime[k+1])/(processAtNextTime[k]-processAtNextTime[k+1])
-                                  for k in range(timeIndexBackward + 1)]
+            (portfolioAtNextTime[0:timeIndexBackward + 1]-portfolioAtNextTime[1:timeIndexBackward + 2])\
+               /(processAtNextTime[0:timeIndexBackward + 1]-processAtNextTime[1:timeIndexBackward + 2])
+
             
             amountInRiskyAsset[timeIndexBackward, 0 : timeIndexBackward + 1] = currentAmountInRiskyAsset 
             
-            currentAmountInRiskFreeAsset = [(u * portfolioAtNextTime[k+1] - d * portfolioAtNextTime[k])\
+            currentAmountInRiskFreeAsset = (u * portfolioAtNextTime[1:timeIndexBackward + 2] - d * portfolioAtNextTime[0:timeIndexBackward + 1])\
                                             /((u-d)*((1+rho)**timeIndexBackward))
-                                  for k in range(timeIndexBackward + 1)]
+      
             
             amountInRiskFreeAsset[timeIndexBackward, 0 : timeIndexBackward + 1] = \
                 currentAmountInRiskFreeAsset

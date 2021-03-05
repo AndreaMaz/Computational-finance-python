@@ -21,7 +21,7 @@ increaseIfUp = 2
 numberOfTimes = 150
 interestRate = 0.1
 
-myBinomialModelSmart = BinomialModelSmartWithLists(initialValue, decreaseIfDown, increaseIfUp,
+myBinomialModelSmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
                                 numberOfTimes, interestRate) 
 
 #prints..
