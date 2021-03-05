@@ -122,10 +122,10 @@ class CliquetOptionForCV:
         truncatedReturns = [min(max(x - 1, self.localFloor), self.localCap) for x in returns]
         
         #you see how simply we can get the sum of elements of a list
-        payoff = sum(truncatedReturns)
+        nonTruncatedPayoff = sum(truncatedReturns)
                 
         # we don't discount the payoff now. Can you guess why?
-        return payoff
+        return nonTruncatedPayoff
                 
     #this is "private": with the double underscore as a prefix we make it possible
     #to call this method only by typing the name of the class
