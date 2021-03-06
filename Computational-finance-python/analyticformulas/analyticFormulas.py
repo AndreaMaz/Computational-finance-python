@@ -45,3 +45,35 @@ def blackScholesPriceCall(initialValue, r, sigma, T, strike):
    
     return callPrice
 
+
+
+def blackScholesDownAndOut(initialValue, r, sigma, T, strike, barrier):
+    """
+    It returns the analytical value of an european call option written
+    on a Black-Scholes model.
+   
+    Parameters
+    ----------
+    numberOfSimulations : int
+        the number of simulations of the the values of the process at maturity.
+    initialValue : float
+        the initial value of the process
+    r : float
+        the risk free rate
+    sigma : float
+        the log-volatility
+    T : float
+        the maturity of the option.
+    strike : float
+        the strike of the option.
+
+    Returns
+    -------
+    callPrice : float
+        the price of the call.
+ 
+    """   
+   
+    return blackScholesPriceCall(initialValue, r, sigma, T, strike) \
+        - (initialValue/barrier)**(-(2*r/sigma**2 - 1)) \
+            * blackScholesPriceCall(barrier**2/initialValue, r, sigma, T, strike)
