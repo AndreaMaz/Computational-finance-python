@@ -30,12 +30,12 @@ payoff = lambda x : max(x-initialValue,0)
 lowerBarrier = 75
 upperBarrier = 150
 
-processRealizations = myBinomialModelSmart.getRealizationsAtGivenTime(maturity - 1)
+processRealizationsAtMaturity = myBinomialModelSmart.getRealizationsAtGivenTime(maturity - 1)
 
-priceFromStrategy = myPayoffEvaluator.getInitialDiscountedValuePortfolio(payoff, maturity, lowerBarrier, upperBarrier)
+priceOfTheOption = myPayoffEvaluator.getInitialDiscountedValuePortfolio(payoff, maturity, lowerBarrier, upperBarrier)
 
 print("The discounted price of the option computed going backward is ",
-      priceFromStrategy)
+      priceOfTheOption)
 
 valuesOption = myPayoffEvaluator.getValuesPortfolioBackward(payoff, maturity, lowerBarrier, upperBarrier)
-realizationOfTheProcess = myBinomialModelSmart.getRealizations()
+processRealizations = myBinomialModelSmart.getRealizations()
