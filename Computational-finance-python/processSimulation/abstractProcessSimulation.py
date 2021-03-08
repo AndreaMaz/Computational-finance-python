@@ -10,9 +10,9 @@ from random import seed
 
 class AbstractProcessSimulation:
     """
-    This is an abstract class whose mail goal is to simulate a continuous stochastic
-    process. The methods providing drift and diffusion are implemented in 
-    sub-classes. 
+    This is an abstract class whose mail goal is to discretize and simulate a
+    continuous time Ito stochastic process. The methods providing drift and diffusion
+    are implemented in sub-classes. 
     
     It is also possible to simulate the process under a given transform, and
     then to transform it back.
@@ -51,6 +51,8 @@ class AbstractProcessSimulation:
     
     def __init__(self, numberOfSimulations, timeStep, finalTime, initialValue,\
                  transform = lambda x : x, inverseTransform = lambda x : x, mySeed = None):
+        #note here the use of lambda functions to provide anonymous functions
+        #that can even be passed as default arguments. 
         """
         
 

@@ -6,7 +6,7 @@ Created on Fri Mar  5 11:11:13 2021
 @author: andreamazzon
 """
 
-from abstractProcessSimulation import AbstractProcessSimulation
+from processSimulation.abstractProcessSimulation import AbstractProcessSimulation
 
 class StandardEulerDiscretization(AbstractProcessSimulation):
     """

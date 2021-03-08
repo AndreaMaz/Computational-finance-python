@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-It tests the pricing of a Knock-out (down-and-out) option, both with 
-Monte-Carlo simulation of the underlying process and PDEs, in the case of a
-Black-Scholes model.
+It tests the pricing of a Knock-out (down-and-out) option, by using the 
+Monte-Carlo simulation of the underlying process
 
 @author: Andrea Mazzon
 """
@@ -12,17 +11,16 @@ import math
 import time
 import numpy as np
 
-from eulerDiscretizationForBlackScholes import EulerDiscretizationForBlackScholes
+from processSimulation.eulerDiscretizationForBlackScholes import EulerDiscretizationForBlackScholes
 from optionMonteCarloValuation.knockOutOption import KnockOutOption
 from analyticformulas.analyticFormulas import blackScholesDownAndOut
-from finitedifferencemethods.implicitEuler import ImplicitEuler
 
 
 
 numberOfSimulations = 10000
 seed = 1897
 
-timeStep = 0.001
+timeStep = 0.1
 finalTime = 3
 maturity = finalTime
 
@@ -60,28 +58,3 @@ timeNeededMC = time.time()  - timeMCInit
 print("The Monte-Carlo price is ", knockOutOption.getPrice(processRealizations))
 print("The time needed with Monte-Carlo is ", timeNeededMC)
 
-#Implicit Euler
-
-dx = 0.01
-
-xmin = lowerBarrier
-xmax = 13
-#xmax = upperBarrier
-
-dt = dx 
-tmax = 3
-
-sigmaFunction = lambda x : sigma*x
-
-functionLeft = lambda x, t : 0
-#functionRight = lambda x, t : 0
-functionRight = lambda x, t : x - strike * math.exp(-r * t)
-
-implicitEulerSolver = ImplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoffFunction, functionLeft, functionRight)
-
-timeImplicitInit = time.time() 
-price = implicitEulerSolver.getSolutionForGivenMaturityAndValue(tmax, initialValue)
-timeNeededImplicit = time.time()  - timeImplicitInit
-
-print("The price with Implicit Euler is  ", price)
-print("The time needed with Implicit Euler is  ", timeNeededImplicit)
