@@ -6,9 +6,9 @@
 
 import math
 
-from processSimulation.abstractProcessSimulation import AbstractProcessSimulation
+from processSimulation.generalProcessSimulation import GeneralProcessSimulation
 
-class EulerDiscretizationForBlackScholes(AbstractProcessSimulation):
+class EulerDiscretizationForBlackScholes(GeneralProcessSimulation):
     """
     It provides the simulation of a Black-Scholes process, by simulating its 
     logarithm. In this way we don't have discretization error

@@ -8,9 +8,9 @@ import numpy as np
 import math
 from random import seed
 
-class AbstractProcessSimulation:
+class GeneralProcessSimulation:
     """
-    This is an abstract class whose mail goal is to discretize and simulate a
+    This is a class whose mail goal is to discretize and simulate a
     continuous time Ito stochastic process. The methods providing drift and diffusion
     are implemented in sub-classes. 
     

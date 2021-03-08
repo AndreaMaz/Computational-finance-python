@@ -6,9 +6,9 @@ Created on Fri Mar  5 11:11:13 2021
 @author: andreamazzon
 """
 
-from processSimulation.abstractProcessSimulation import AbstractProcessSimulation
+from processSimulation.generalProcessSimulation import GeneralProcessSimulation
 
-class StandardEulerDiscretization(AbstractProcessSimulation):
+class StandardEulerDiscretization(GeneralProcessSimulation):
     """
     It provides the simulation of a local volatility process.
     
