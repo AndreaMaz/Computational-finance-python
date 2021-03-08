@@ -38,4 +38,4 @@ print("The discounted price of the option computed going backward is ",
       priceFromStrategy)
 
 valuesOption = myPayoffEvaluator.getValuesPortfolioBackward(payoff, maturity, lowerBarrier, upperBarrier)
-real = myBinomialModelSmart.getRealizations()
+realizationOfTheProcess = myBinomialModelSmart.getRealizations()
