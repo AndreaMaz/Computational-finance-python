@@ -30,7 +30,7 @@ sigma = 0.5
 
 
 strike = 2
-lowerBarrier = 1.2
+lowerBarrier = 1.6
 #upperBarrier = 3.2
 
 analyticPrice = blackScholesDownAndOut(initialValue, r, sigma, maturity, strike, lowerBarrier)

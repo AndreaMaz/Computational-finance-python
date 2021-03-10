@@ -47,11 +47,12 @@ class EulerDiscretizationForBlackScholes(GeneralProcessSimulation):
     
     """
     
-    def __init__(self, numberOfSimulations, timeStep, finalTime, initialValue,mu, sigma, 
-                 mySeed = None): 
+    def __init__(self, numberOfSimulations, timeStep, finalTime, initialValue,
+                 mu, sigma, mySeed = None): 
         
         self.mu = mu
         self.sigma = sigma
+        
         
         super().__init__(numberOfSimulations, timeStep, finalTime, initialValue, 
                  lambda x : math.exp(x), lambda x : math.log(x), mySeed)

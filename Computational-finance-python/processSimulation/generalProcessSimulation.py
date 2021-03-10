@@ -42,6 +42,8 @@ class GeneralProcessSimulation:
         It returns all the realizations of the process
     getRealizationsAtGivenTimeIndex(timeIndex):
         It returns the realizations of the process at a given time index
+    getRealizationsAtGivenTimeIndex(time):
+        It returns the realizations of the process at a given time
     getAverageRealizationsAtGivenTimeIndex(timeIndex):
         It returns the average realizations of the process at a given time index
     getAverageRealizationsAtGivenTime(time):
@@ -49,7 +51,7 @@ class GeneralProcessSimulation:
 
     """
     
-    def __init__(self, numberOfSimulations, timeStep, finalTime, initialValue,\
+    def __init__(self, numberOfSimulations, timeStep, finalTime, initialValue,
                  transform = lambda x : x, inverseTransform = lambda x : x, mySeed = None):
         #note here the use of lambda functions to provide anonymous functions
         #that can even be passed as default arguments. 
@@ -102,9 +104,8 @@ class GeneralProcessSimulation:
         vectorizedGetDiffusion = np.vectorize(self.getDiffusion)
         
         vectorizedTransform = np.vectorize(self.transform)
-        #vectorizedInverseTransform = np.vectorize(self.inverseTransform)
         
-        numberOfTimes = round(self.finalTime/self.timeStep) + 1
+        numberOfTimes = math.ceil(self.finalTime/self.timeStep)+1
         
         #times on the rows
         self.realizations = np.zeros((numberOfTimes,self.numberOfSimulations)) 
@@ -118,13 +119,14 @@ class GeneralProcessSimulation:
         currentTime = self.timeStep  
         for timeIndex in range(1, numberOfTimes):
             pastRealizations = self.realizations[timeIndex - 1]
-            
-            
-            self.realizations[timeIndex] = self.realizations[timeIndex - 1] \
+                 
+            self.realizations[timeIndex] = pastRealizations \
                 + self.timeStep * vectorizedGetDrift(currentTime, pastRealizations)\
                     + vectorizedGetDiffusion(currentTime, pastRealizations) \
-                        *  math.sqrt(self.timeStep) * standardNormalRealizations[timeIndex] #the Brownian motion
-                        
+                        * math.sqrt(self.timeStep) * standardNormalRealizations[timeIndex] #the Brownian motion
+            
+            currentTime += self.timeStep
+                    
         self.realizations = vectorizedTransform(self.realizations)
                         
         
