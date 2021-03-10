@@ -116,12 +116,12 @@ class Upwind(PricingWithPDEs):
        
     def initializeTerms(self):
         #we initialize the multiplying terms for second and first space derivative
-        self.multiplyTermFirstDerivative = 0.5 * self.dt/self.dx
+        self.multiplyTermFirstDerivative = self.dt/self.dx
         self.multiplySecondDerivative = self.dt/(self.dx*self.dx)
         
     def getSolutionAtNextTime(self):
         """    
-        It returns the solution at the next time step, via Upwind
+        It returns the solution at the next time step, via Exlicit Euler
         Parameters
         ----------
         None
@@ -131,19 +131,21 @@ class Upwind(PricingWithPDEs):
         The solution at the next time step
 
         """
-        uPast = self. uPast
+        uPast = self.uPast
+        
         u = np.zeros((len(uPast)))
-                                                            
+                       
+        #this is zero for a call                                      
         u[0] = self.functionLeft(self.x[0], self.currentTime)
-        #this is the only difference with respect to Explicit Euler: we have 
-        #backward derivatives because the term that multiplies the first derivative
-        #in the PDE is negative
+        
+        #note that we have here central derivatives
         firstDerivatives = self.multiplyTermFirstDerivative * (uPast[1:-1]-uPast[:-2])
+        
         secondDerivatives = self.multiplySecondDerivative * (uPast[2:]-2*uPast[1:-1]+uPast[:-2])
         
         u[1:-1] = uPast[1:-1] + 0.5 * secondDerivatives * self.sigma(self.x[1:-1])**2 \
             + firstDerivatives * self.r * self.x[1:-1] - self.dt * self.r * uPast[1:-1]
         
-
+        #this is zero for a put 
         u[-1] = self.functionRight(self.x[-1], self.currentTime)
         return u
