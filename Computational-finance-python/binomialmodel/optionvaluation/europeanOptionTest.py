@@ -9,7 +9,8 @@ on a binomial model
 
 import time
 
-from europeanOption import EuropeanOption
+#from europeanOption import EuropeanOption
+from europeanOptionWithLists import EuropeanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
 
 
@@ -43,6 +44,8 @@ print()
 
 currentTime = maturity - 1
 
+amountInRiskyAssetMatrix, amountInRiskFreeAssetMatrix = myPayoffEvaluator.getStrategy(payoff, maturity)
+
 amountInRiskyAsset, amountInRiskFreeAsset = myPayoffEvaluator.getStrategyAtGivenTime(payoff, currentTime, maturity)
 
 end = time.time()
@@ -66,3 +69,5 @@ print('\n'.join('{:.3}'.format(amount) for amount in amountInRiskFreeAsset))
 print()
 
 print("Elapse time ", end - start)
+
+processReal = myBinomialModelSmart.getRealizationsAtGivenTime(maturity)

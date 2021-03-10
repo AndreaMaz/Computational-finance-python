@@ -13,10 +13,10 @@ from knockOutOption import KnockOutOption
 
 
 initialValue = 100
-decreaseIfDown = 0.8
-increaseIfUp = 1.2
-numberOfTimes = 5
+decreaseIfDown = 0.5
+increaseIfUp = 2
 interestRate = 0.0
+numberOfTimes = 5
 
 myBinomialModelSmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
                                 numberOfTimes, interestRate) 
@@ -25,12 +25,12 @@ myPayoffEvaluator = KnockOutOption(myBinomialModelSmart)
 
 maturity = numberOfTimes - 1
 
-payoff = lambda x : max(x-initialValue,0)
+payoff = lambda x : max(x-1,0)
 
 lowerBarrier = 75
 upperBarrier = 150
 
-processRealizationsAtMaturity = myBinomialModelSmart.getRealizationsAtGivenTime(maturity - 1)
+#processRealizationsAtMaturity = myBinomialModelSmart.getRealizationsAtGivenTime(maturity - 1)
 
 priceOfTheOption = myPayoffEvaluator.getInitialDiscountedValuePortfolio(payoff, maturity, lowerBarrier, upperBarrier)
 

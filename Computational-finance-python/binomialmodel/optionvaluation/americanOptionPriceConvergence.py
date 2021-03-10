@@ -21,6 +21,7 @@ from binomialmodel.creationandcalibration.binomialModelSmart import BinomialMode
 initialValue = 1
 r = 0.02
 sigma = 0.7
+
 maturity = 3
 
 #we are at the money
