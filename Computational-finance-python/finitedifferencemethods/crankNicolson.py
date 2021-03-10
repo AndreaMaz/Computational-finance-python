@@ -23,10 +23,7 @@ class CrankNicolson(PricingWithPDEs):
     Boundary conditions given as attributes of the class are applied at both ends
     of the domain. An initial condition is applied at t = 0. This can be seen
     as the payoff of an option. In this case, time represents maturity. 
-    
-    It is extended by classes representing the specific PDE and the specific
-    method.
-    
+
     Attributes
     ----------
     dx : float
@@ -53,9 +50,9 @@ class CrankNicolson(PricingWithPDEs):
         the initial condition. Called in this way because it corresponds to 
         payoff of an option seeing time as maturity
     functionLeft : function
-        the condition at the left end of the space domain
+        the condition at the left end of the space domain. 
     functionRight : function
-        the condition at the right end of the space domain
+        the condition at the right end of the space domain. 
     currentTime : int
         the current time. The PDE is solved going forward in time. Here the
         current time is used to plot the solution dynamically and to compute 
@@ -76,7 +73,7 @@ class CrankNicolson(PricingWithPDEs):
     getSolutionForGivenMaturityAndValue(time, space):
         It returns the solution at given time and given space
     """
-    def __init__(self, dx, dt, xmin, xmax, tmax, r, sigma, payoff, functionLeft, functionRight):
+    def __init__(self, dx, dt, xmin, xmax, tmax, r, sigma, payoff,functionLeft, functionRight):
         """
         Parameters
         ----------

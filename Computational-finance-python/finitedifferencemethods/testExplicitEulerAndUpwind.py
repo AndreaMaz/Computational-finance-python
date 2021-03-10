@@ -33,6 +33,6 @@ payoff = lambda x : np.maximum(x - strike, 0)
 functionLeft = lambda x, t : 0
 functionRight = lambda x, t : x - strike * math.exp(-r * t)
 
-solver = ExplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
+solver = Upwind(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
 solver.solveAndPlot()
 

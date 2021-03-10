@@ -20,7 +20,7 @@ from analyticformulas.analyticFormulas import blackScholesPriceCall
 
 dx = 0.1
 xmin = 0
-xmax = 14
+xmax = 5
 
 dt = dx 
 tmax = 3
@@ -46,7 +46,7 @@ explicitEulerSolver = ExplicitEuler(dx, dtExplicitEuler, xmin, xmax, tmax, r, si
 implicitEulerSolver = ImplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
 crankNicolsonSolver = CrankNicolson(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
     
-def compareErrorsAndTimes():
+def compareCallErrorsAndTimes():
     """
     It compares Explicit Euler, Implicit Euler and Crank-Nicholson on the valuation
     of a call option, in terms of accuracy and time. It prints the average error
@@ -87,11 +87,11 @@ def compareErrorsAndTimes():
     #and the errors
     for x in np.arange(strike/2, strike*2, 0.1) :
         analyticSolution = blackScholesPriceCall(x, r, sigma, tmax, strike)
-        errorExplicit.append(abs(explicitEulerSolver.getSolutionForGivenMaturityAndValue(tmax, x)-analyticSolution) \
+        errorExplicit.append(abs(explicitEulerSolver.getSolutionForGivenTimeAndValue(tmax, x)-analyticSolution) \
             / analyticSolution)
-        errorImplicit.append(abs(implicitEulerSolver.getSolutionForGivenMaturityAndValue(tmax, x)-analyticSolution) \
+        errorImplicit.append(abs(implicitEulerSolver.getSolutionForGivenTimeAndValue(tmax, x)-analyticSolution) \
             / analyticSolution)
-        errorCrankNicolson.append(abs(crankNicolsonSolver.getSolutionForGivenMaturityAndValue(tmax, x)-analyticSolution) \
+        errorCrankNicolson.append(abs(crankNicolsonSolver.getSolutionForGivenTimeAndValue(tmax, x)-analyticSolution) \
             / analyticSolution)
 
     print() 
@@ -106,7 +106,7 @@ def compareErrorsAndTimes():
    
    
     
-def plotWithExactSolution():
+def plotCallWithExactSolution():
     """
     It dynamically plots the solution got from the three methods, together with
     the analytic ones
@@ -124,9 +124,9 @@ def plotWithExactSolution():
         #it would divide by zero                                                     
         exactSolution = [0] + [blackScholesPriceCall(underlying, r, sigma, maturity, strike) for underlying in x[1:]] 
         
-        solutionExplicitEuler = [explicitEulerSolver.getSolutionForGivenMaturityAndValue(maturity, underlying) for underlying in x]
-        solutionImplicitEuler = [implicitEulerSolver.getSolutionForGivenMaturityAndValue(maturity, underlying) for underlying in x]
-        solutionCrankNicolson = [crankNicolsonSolver.getSolutionForGivenMaturityAndValue(maturity, underlying) for underlying in x]
+        solutionExplicitEuler = [explicitEulerSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
+        solutionImplicitEuler = [implicitEulerSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
+        solutionCrankNicolson = [crankNicolsonSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
 
         plt.plot(x, exactSolution, 'r', label="Analytic solution")
         plt.plot(x, solutionExplicitEuler, 'bo-', label="Explicit Euler")
@@ -137,16 +137,54 @@ def plotWithExactSolution():
         plt.grid(True)
         plt.xlabel("Underlying value")
         plt.ylabel("Price")
-        plt.legend(loc=1, fontsize=12)
+        plt.legend(loc=2, fontsize=12)
         plt.suptitle("Maturity = %1.3f" % maturity)
         plt.pause(0.01)
             
         maturity += dt
     plt.show()
     
-def main():
-    #compareErrorsAndTimes()
-    plotWithExactSolution()
     
-if __name__ == "__main__":
-    main()
+def plotSolutionBarrierOption():
+    """
+    It dynamically plots the solution got from the three methods
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    lowerBarrier = 0.0
+    upperBarrier = 4
+    
+    functionRightBarrier = lambda x, t : 0
+    
+
+    implicitEulerBarrier = ImplicitEuler(dx, dt, lowerBarrier, upperBarrier, tmax, r, sigmaFunction, payoff, functionLeft, functionRightBarrier)
+    
+    #we directly get the discretized space from one of the objects
+    x = np.arange(lowerBarrier, upperBarrier+dx, dx) 
+    
+    for maturity in np.arange(0.1, tmax, 0.02):
+        #we would have problems getting the Black-Scholes formula for x=0, since
+        #it would divide by zero                                                     
+        
+        solutionImplicitEuler = [implicitEulerBarrier.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
+
+        plt.plot(x, solutionImplicitEuler)
+
+        plt.axis((xmin-0.12, upperBarrier+0.12, 0, 2))
+        plt.grid(True)
+        plt.xlabel("Underlying value")
+        plt.ylabel("Price")
+        plt.suptitle("Maturity = %1.3f" % maturity)
+        plt.pause(0.01)
+            
+        maturity += dt
+    plt.show()
+    
+compareCallErrorsAndTimes()
+#plotCallWithExactSolution()
+#plotSolutionBarrierOption()
+    

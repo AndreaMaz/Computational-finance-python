@@ -6,6 +6,7 @@
 
 import abc
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 
 class PricingWithPDEs(metaclass=abc.ABCMeta):
@@ -47,9 +48,9 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
         the initial condition. Called in this way because it corresponds to 
         payoff of an option seeing time as maturity
     functionLeft : function
-        the condition at the left end of the space domain
+        the condition at the left end of the space domain. Default: None
     functionRight : function
-        the condition at the right end of the space domain
+        the condition at the right end of the space domain. Default:None
     currentTime : int
         the current time. The PDE is solved going forward in time. Here the
         current time is used to plot the solution dynamically and to compute 
@@ -71,7 +72,7 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
         It returns the solution at given time and given space
     """
     
-    def __init__(self, dx, dt, xmin, xmax, tmax, payoff, functionLeft, functionRight):
+    def __init__(self, dx, dt, xmin, xmax, tmax, payoff, functionLeft = None, functionRight = None):
         """
         Parameters
         ----------
@@ -89,9 +90,9 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
             the initial condition. Called in this way because it corresponds to 
             payoff of an option seeing time as maturity
         functionLeft : function
-            the condition at the left end of the space domain
+            the condition at the left end of the space domain. Default: None
         functionRight : function
-            the condition at the right end of the space domain
+            the condition at the right end of the space domain. Default: None
         currentTime : int
             the current time. The PDE is solved going forward in time. Here the
             current time is used to plot the solution dynamically and to compute 
@@ -110,8 +111,8 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
         
         #we create an equi-spaced space discretization
         self.x = np.arange(self.xmin, self.xmax+self.dx, self.dx) 
-        self.numberOfSpaceSteps = round((self.xmax-self.xmin)/self.dx)
-        self.numberOfTimeSteps = round(self.tmax/self.dt)
+        self.numberOfSpaceSteps = math.ceil((self.xmax-self.xmin)/self.dx)
+        self.numberOfTimeSteps = math.ceil(self.tmax/self.dt)
 
         #conditions
         self.payoff = payoff
@@ -162,7 +163,7 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
             #and update uPast: u will be the "past solution" at the next time step
             self.uPast = self.u.copy()
             
-            #we plot the solution when currenTime is (close to) 0.1, 0.2, ..
+            #we plot the solution when currentTime is (close to) 0.1, 0.2, ..
             if self.currentTime - self.dt < timeToPlot and self.currentTime >= timeToPlot:
                 plt.plot(self.x, self.u, 'bo-', label="Numeric solution")
                 #we assume here that the solution is not bigger than the max x
@@ -172,7 +173,7 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
                 plt.grid(True)
                 plt.xlabel("Underlying value")
                 plt.ylabel("Price")
-                plt.legend(loc=1, fontsize=12)
+                plt.legend(fontsize=12)
                 plt.suptitle("Time = %1.3f" % timeToPlot)
                 plt.pause(0.01)
                 timeToPlot += 0.1
@@ -207,7 +208,7 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
         return self.solution 
    
       
-    def getSolutionForGivenMaturityAndValue(self, time, space):
+    def getSolutionForGivenTimeAndValue(self, time, space):
         """
         It returns the solution at given time and given space.
 
