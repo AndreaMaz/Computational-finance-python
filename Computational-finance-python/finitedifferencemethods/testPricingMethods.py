@@ -22,10 +22,10 @@ dx = 0.1
 xmin = 0
 xmax = 5
 
-dt = dx 
+dt = dx
 tmax = 3
 
-sigma = 0.5
+sigma = 0.9
 sigmaFunction = lambda x : sigma*x
 r = 0.4
 
@@ -40,7 +40,7 @@ functionLeft = lambda x, t : 0
 #where T is the maturity 
 functionRight = lambda x, t : x - strike * math.exp(-r * t)
 
-dtExplicitEuler = 0.01*dx*dx # the minimum value such that it is stable
+dtExplicitEuler = dx*dx/(sigma*xmax)**2 # the minimum value such that it is stable
 
 explicitEulerSolver = ExplicitEuler(dx, dtExplicitEuler, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
 implicitEulerSolver = ImplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
@@ -155,13 +155,14 @@ def plotSolutionBarrierOption():
 
     """
     
-    lowerBarrier = 0.0
-    upperBarrier = 4
+    lowerBarrier = 0.5
+    upperBarrier = 5
     
     functionRightBarrier = lambda x, t : 0
     
 
     implicitEulerBarrier = ImplicitEuler(dx, dt, lowerBarrier, upperBarrier, tmax, r, sigmaFunction, payoff, functionLeft, functionRightBarrier)
+    
     
     #we directly get the discretized space from one of the objects
     x = np.arange(lowerBarrier, upperBarrier+dx, dx) 
@@ -174,7 +175,7 @@ def plotSolutionBarrierOption():
 
         plt.plot(x, solutionImplicitEuler)
 
-        plt.axis((xmin-0.12, upperBarrier+0.12, 0, 2))
+        plt.axis((xmin-0.12, upperBarrier+0.12, 0, 4))
         plt.grid(True)
         plt.xlabel("Underlying value")
         plt.ylabel("Price")
@@ -184,7 +185,7 @@ def plotSolutionBarrierOption():
         maturity += dt
     plt.show()
     
-compareCallErrorsAndTimes()
-#plotCallWithExactSolution()
+#compareCallErrorsAndTimes()
+plotCallWithExactSolution()
 #plotSolutionBarrierOption()
     

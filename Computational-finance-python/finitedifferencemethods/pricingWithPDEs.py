@@ -178,6 +178,7 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
                 plt.pause(0.01)
                 timeToPlot += 0.1
             self.currentTime += self.dt
+
         plt.show()
 
 
@@ -194,7 +195,6 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
 
         """
         solution = np.zeros((self.numberOfTimeSteps+1,self.numberOfSpaceSteps+1))
-        self.currentTime = 0
         for i in range(self.numberOfTimeSteps+1):
             #we store the solution at past time
             solution[i] = self.u           

@@ -27,8 +27,7 @@ sigma = 0.5
 
 
 strike = 2
-lowerBarrier = 1.2
-#upperBarrier = 3.2
+lowerBarrier = 0.2
 
 analyticPrice = blackScholesDownAndOut(initialValue, r, sigma, maturity, strike, lowerBarrier)
 
@@ -39,7 +38,7 @@ print("The analytic price is ", analyticPrice)
 numberOfSimulations = 10000
 seed = 1897
 
-timeStep = 0.001
+timeStep = 0.01
 finalTime = maturity
 
 payoffFunction = lambda x : np.maximum(x-strike,0)
@@ -56,19 +55,19 @@ processRealizations = eulerBlackScholes.getRealizations()
 
 knockOutOption = KnockOutOption(payoffFunction, maturity, lowerBarrier)
 
+MCprice = knockOutOption.getPrice(processRealizations)
+
 timeNeededMC = time.time()  - timeMCInit
 
-print("The Monte-Carlo price is ", knockOutOption.getPrice(processRealizations))
+print("The Monte-Carlo price is ", MCprice)
 print("The time needed with Monte-Carlo is ", timeNeededMC)
 
 #Implicit Euler
 
-dx = 0.01
+dx = 0.05
 
 xmin = lowerBarrier
 xmax = 13
-
-#xmax = upperBarrier
 
 dt = dx 
 tmax = 3
@@ -76,14 +75,15 @@ tmax = 3
 sigmaFunction = lambda x : sigma*x
 
 functionLeft = lambda x, t : 0
-#functionRight = lambda x, t : 0
 functionRight = lambda x, t : x - strike * math.exp(-r * t)
+
+timeImplicitInit = time.time() 
 
 implicitEulerSolver = ImplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoffFunction, functionLeft, functionRight)
 
-timeImplicitInit = time.time() 
-price = implicitEulerSolver.getSolutionForGivenTimeAndValue(tmax, initialValue)
+priceIE = implicitEulerSolver.getSolutionForGivenTimeAndValue(tmax, initialValue)
+
 timeNeededImplicit = time.time()  - timeImplicitInit
 
-print("The price with Implicit Euler is  ", price)
+print("The price with Implicit Euler is  ", priceIE)
 print("The time needed with Implicit Euler is  ", timeNeededImplicit)

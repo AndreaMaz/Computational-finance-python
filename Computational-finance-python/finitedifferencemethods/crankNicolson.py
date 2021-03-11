@@ -157,13 +157,12 @@ class CrankNicolson(PricingWithPDEs):
         The solution at the next time step
 
         """
-        uPast = self. uPast
+        uPast = self.uPast
         u = np.zeros((len(uPast)))
         
         firstDerivatives = self.multiplyTermFirstDerivative * (uPast[2:] - uPast[:-2])
         secondDerivatives = self.multiplySecondDerivative * (uPast[2:] - 2*uPast[1:-1] + uPast[:-2])
-        
-        
+           
         addingTerm = 0.5 * secondDerivatives * self.sigma(self.x[1:-1])**2 \
                 + firstDerivatives * self.r * self.x[1:-1] - self.dt * self.r * uPast[1:-1]
        
