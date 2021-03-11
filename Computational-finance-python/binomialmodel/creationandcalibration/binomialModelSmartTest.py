@@ -17,11 +17,11 @@ from BinomialModelSmartWithLists import BinomialModelSmartWithLists
 
 initialValue = 3.0
 decreaseIfDown = 0.5
-increaseIfUp = 2
+increaseIfUp = 1.5
 numberOfTimes = 150
-interestRate = 0.1
+interestRate = 0.0
 
-myBinomialModelSmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
+myBinomialModelSmart = BinomialModelSmartWithLists(initialValue, decreaseIfDown, increaseIfUp,
                                 numberOfTimes, interestRate) 
 
 #prints..

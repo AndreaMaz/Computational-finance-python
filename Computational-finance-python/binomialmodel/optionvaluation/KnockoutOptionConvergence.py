@@ -22,7 +22,7 @@ initialValue = 2
 r = 0.02
 sigma = 0.7
 strike = 1.6
-lowerBarrier = 0.7
+lowerBarrier = 1.5
 
 maturity = 3
 
@@ -32,7 +32,7 @@ payoff = lambda x : max (x-strike,0)
 
 
 #the maximum number of times N we use to approximate the price
-maximumNumberOfTimes = 250
+maximumNumberOfTimes = 1000
 
 #we want to keep track of the prices and plot them
 prices = []

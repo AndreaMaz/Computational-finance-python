@@ -67,7 +67,6 @@ class BinomialModel(metaclass=abc.ABCMeta):
     def __init__(self, initialValue, decreaseIfDown, increaseIfUp,
                  numberOfTimes,
                  interestRate = 0, #it is =0 if not specified
-                 mySeed = 1897 #it is =1897 if not specified)
                  ):
         """
         Parameters

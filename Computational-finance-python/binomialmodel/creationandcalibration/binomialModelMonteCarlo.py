@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
 @author: Andrea Mazzon
 """
 
@@ -153,7 +152,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         
         q = self.riskNeutralProbabilityUp
         
-        randomNumbers = np.random.uniform(0,1,size = (self.numberOfTimes, self.numberOfSimulations))
+        randomNumbers = np.random.uniform(0,1, size = (self.numberOfTimes, self.numberOfSimulations))
         
         #ternary operator applied to matrices
         upsAndDowns = np.where(randomNumbers < q, u, d)
@@ -183,6 +182,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         # first the initial values. Look at how we can fill a vector with a single
         # value in Python.
         realizations[0] = [self.initialValue] * self.numberOfSimulations
+        #realizations[0] = np.full((self.numberOfSimulations),self.initialValue)
         upsAndDowns = self.getUpsAndDowns()
         for timeIndex in range(1,self.numberOfTimes):
                 #S[i+1,j] = upsAndDowns[i,j]S[i,j]

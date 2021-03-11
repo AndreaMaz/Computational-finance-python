@@ -18,7 +18,7 @@ import time
 from cliquetOption import CliquetOption
 from controlVariatesCliquetBS import ControlVariatesCliquetBS
 from fasterControlVariatesCliquetBS import FasterControlVariatesCliquetBS
-from generateBSReturns import GenerateBSReturns
+from generateBSReturnsWithArrays import GenerateBSReturns
 
 
 #processParameters

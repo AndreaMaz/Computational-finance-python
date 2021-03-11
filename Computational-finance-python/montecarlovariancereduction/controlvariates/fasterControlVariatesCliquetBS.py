@@ -245,7 +245,7 @@ class FasterControlVariatesCliquetBS:
 
         covarianceMatrix = np.cov(payoffsWhenTruncated, payoffsWhenNotTruncated)
         
-        optimalChoice = covarianceMatrix[0,1]/covarianceMatrix[0,0]
+        optimalChoice = covarianceMatrix[0,1]/covarianceMatrix[1,1]
         
         #and we return the price with control variates
         return discountedPriceOfTheOptionMC \

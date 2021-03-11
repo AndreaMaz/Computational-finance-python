@@ -127,6 +127,7 @@ class CliquetOptionForCV:
         # we don't discount the payoff now. Can you guess why?
         return nonTruncatedPayoff
                 
+    
     #this is "private": with the double underscore as a prefix we make it possible
     #to call this method only by typing the name of the class
     def __setNonTruncatedPayoffs(self, returnsForAllSimulations):

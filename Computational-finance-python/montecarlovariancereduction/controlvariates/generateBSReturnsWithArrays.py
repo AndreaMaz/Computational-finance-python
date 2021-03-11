@@ -89,10 +89,7 @@ class GenerateBSReturns:
         """
         
         lenghthOfIntervals = self.finalTime / self.numberOfIntervals 
-        
-        #we initialize the matrix, declaring its size
-        blackScholesReturns = np.full((self.numberOfSimulations,self.numberOfIntervals),np.nan)
-        
+                
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
         
@@ -120,9 +117,7 @@ class GenerateBSReturns:
         
         halfSimulations = math.ceil(self.numberOfSimulations/2)
         lenghthOfIntervals = self.finalTime / self.numberOfIntervals 
-        
-        blackScholesReturns = np.full((self.numberOfSimulations,self.numberOfIntervals),np.nan)
-        
+                
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
         standardNormalRealizations = \
