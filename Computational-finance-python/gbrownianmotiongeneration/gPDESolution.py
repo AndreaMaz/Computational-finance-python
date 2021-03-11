@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Tue Mar  9 14:36:07 2021
-
 @author: andreamazzon
 """
 
@@ -24,7 +21,6 @@ class GPDESolution(PricingWithPDEs):
     G(y)=-1/2 y sigma_d^2 if y < 0, 
     
     for fixed 0<sigma_d<sigma_u.
-
     The solution of this PDE at (t,x)=(0,1) provides 
     
     E[1_{X<=a}],
@@ -56,7 +52,6 @@ class GPDESolution(PricingWithPDEs):
         the solution at the next time step in the derived classes.
                                                               
         
-
     Methods
     -------
     setThresholdForInitialCondition(self, threshold):
@@ -74,7 +69,12 @@ class GPDESolution(PricingWithPDEs):
         It returns the solution at given time and given space
     """
     
-    
+    #the constructor here is a bit different from the other cases we have seen:
+    #indeed (with an eye at the application to the generation of the G-Monte Carlo)
+    #we realize that we don't want to create a new object  every time we 
+    #change the initial condition, i.e., the threshold of the indicator function.
+    #So here we just initialize the parameters, but we wait before fixing the
+    #initial condition, i.e., before calling the super constructor
     def __init__(self, dx, dt, xmin, xmax, tmax, sigmaDown, sigmaUp):
         """
         Parameters
@@ -100,11 +100,9 @@ class GPDESolution(PricingWithPDEs):
             the current time. The PDE is solved going forward in time. Here the
             current time is used to plot the solution dynamically and to compute 
             the solution at the next time step in the derived classes.
-
         Returns
         -------
         None.
-
         """
         self.dx = dx # discretization step on the space
         self.dt = dt # discretization step on the time
@@ -114,7 +112,6 @@ class GPDESolution(PricingWithPDEs):
         
         self.gFunction = lambda x : 0.5 * sigmaUp**2 * x * (x>0).astype(int) + \
             0.5 * sigmaDown**2 * x * (x <= 0).astype(int)
-        #self.gFunction = lambda x : 0.5 * sigmaUp**2 * x if x > 0 else 0.5 * sigmaDown**2 * x
         self.__initializeTerms()
         
        
@@ -122,37 +119,33 @@ class GPDESolution(PricingWithPDEs):
         #we initialize the multiplying terms for second and first space derivative
         self.multiplySecondDerivative = self.dt/(self.dx*self.dx)
         
-        
+    #here we want to set the initial condition. The super constructor is called here.
+    #This method will be called after the object of this class is created.
     def setThresholdForInitialCondition(self, threshold):
         """
         It creates an object of the class with an initial condition 
         f(x) = 1_{x<=threshold} 
-
         Parameters
         ----------
         threshold : float 
             the number a such that the initial condition is f(x) = 1_{x<=a} .
-
         Returns
         -------
         None.
-
         """
-        initialCondition = lambda x: x <= threshold
+        initialCondition = lambda x: x < threshold
         super().__init__(self.dx, self.dt, self.xmin, self.xmax, self.tmax, initialCondition)    
         
         
     def getSolutionAtNextTime(self):
         """    
-        It returns the solution at the next time step, via Exlicit Euler
+        It returns the solution at the next time step, via Explicit Euler
         Parameters
         ----------
         None
-
         Returns
         -------
         The solution at the next time step
-
         """
         uPast = self.uPast
         

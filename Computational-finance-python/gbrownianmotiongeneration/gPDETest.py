@@ -5,16 +5,17 @@
 """
 
 from gPDESolution import GPDESolution
+from gPDESolutionImplicit import GPDESolutionImplicit
 
-dx = 0.005
-xmin = -2
-xmax = 2
+dx = 0.01
+xmin = -4.0
+xmax = 4.0
 
-dt = 0.5*dx*dx 
+dt = dx*dx 
 tmax = 1
 
-sigmaDown = 0.6
-sigmaUp = 1
+sigmaDown = 1*0.31622776601683794
+sigmaUp = 1*0.31622776601683794
 
 threshold = 0
 
@@ -22,4 +23,4 @@ pdeSolver = GPDESolution(dx, dt, xmin, xmax, tmax, sigmaDown, sigmaUp)
 
 pdeSolver.setThresholdForInitialCondition(threshold)
 
-print(pdeSolver.getSolutionForGivenMaturityAndValue(tmax, 0))
+print(pdeSolver.getSolutionForGivenTimeAndValue(1, 0.2))

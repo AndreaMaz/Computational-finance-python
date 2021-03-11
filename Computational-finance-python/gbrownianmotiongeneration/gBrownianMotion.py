@@ -10,11 +10,12 @@ import matplotlib.pyplot as plt
 
 
 from gPDESolution import GPDESolution
+#from gPDESolutionImplicit import GPDESolutionImplicit
 from bisectionmethod.bisectionMethod import bisection
 
 class GBrownianMotion:
     """
-    It simulates the trajectories of the G-Brownian motion, by apporximating its
+    It simulates the trajectories of the G-Brownian motion, by approximating its
     cumulative distribution function via finite difference methods to solve
     the related nonlinear PDE and inverting it via a bisection search algorithm.
     
@@ -56,25 +57,27 @@ class GBrownianMotion:
     
     """
     
-    def __init__(self, dx, dt, xmin, xmax, tmax, dtGBrownianIncrements, 
+    def __init__(self, dx, dt, xmin, xmax, tmax, minusA, plusA, dtGBrownianIncrements, 
                  dxFirstDistributions, sigmaDown, sigmaUp, numberOfSimulations):
+
+        self.pdeSolver = GPDESolution(dx, dt, xmin, xmax, tmax, sigmaDown,#min vol of increments 
+            sigmaUp)#max vol of increments
         
         self.dxFirstDistributions = dxFirstDistributions
         
         #it will be used for the interpolation of the cdf
-        self.spaceDiscretizationFirstDistributions = np.arange(xmin, xmax, dxFirstDistributions) 
+        self.spaceDiscretizationFirstDistributions = np.arange(minusA, plusA + dxFirstDistributions, dxFirstDistributions) 
         
+        #parameters for the simulation of the trajyetories of the G-Brownian
+        #motion once we solve the PDE and we interpolate. 
         self.dtGBrownianIncrements = dtGBrownianIncrements
-        self.numberOfTimes = math.ceil(tmax/dtGBrownianIncrements)+1
-        self.time = np.arange(0, tmax+ dtGBrownianIncrements, dtGBrownianIncrements)
+        self.numberOfTimesForGBM = math.ceil(tmax/dtGBrownianIncrements)+1
+        self.timeForGBM = np.arange(0, tmax + dtGBrownianIncrements, dtGBrownianIncrements)
         
         self.numberOfSimulations = numberOfSimulations
         
-        self.pdeSolver = GPDESolution(dx, dt, xmin, xmax, tmax,
-            sigmaDown * math.sqrt(dtGBrownianIncrements),#min vol of increments 
-            sigmaUp * math.sqrt(dtGBrownianIncrements))#max vol of increments
-        
         self.__setFirstDistributions()#the base on which we then interpolate
+
         self.__generateGBrownianMotion()#we generate the trajectories once for all
         """
         dt : float
@@ -115,10 +118,10 @@ class GBrownianMotion:
         
     def __getDistributionForGivenThreshold(self, threshold):
         #we don't want to create a new object for every new initial condition:
-        #remember that the threshold identifies the intial condition of the PDE
+        #remember that the threshold identifies the initial condition of the PDE
         self.pdeSolver.setThresholdForInitialCondition(threshold)
         #look at the script!
-        return self.pdeSolver.getSolutionForGivenMaturityAndValue(1, 0)
+        return self.pdeSolver.getSolutionForGivenTimeAndValue(1, 0)
         
     
     def __setFirstDistributions(self):
@@ -132,7 +135,7 @@ class GBrownianMotion:
         #searchsorted takes as an input a sorted vector, which the space discretization
         #is, and a value. It returns the position at which the value must be 
         #placed in the vector to keep it ordered. For example, try to type
-        #np.searchsorted([1,2,3],1-5)
+        #np.searchsorted([1,2,3],1.5)
         thresholdIndex = np.searchsorted(self.spaceDiscretizationFirstDistributions, threshold)
         #the case when the threshold we give is smaller than the left extreme
         #of the interval
@@ -159,25 +162,28 @@ class GBrownianMotion:
         #we invert here the approximated cumulative distribution function via
         #bisection search. This is the function of which we want to find the zero 
         def cumulativeDistributionRemainder(x):
-            #if this is zero, it means that F(y)=uniformRealization, so
-            #F^(-1)(y)=uniformRealization 
+            #if this is zero, it means that F(y) = uniformRealization, so
+            #y = F^(-1)(uniformRealization)
             return self.__getInterpolatedSolution(x) - uniformRealization
         #we know that the Brownian increments will quite for sure not be smaller
         #than -2 or bigger than 2
-        return bisection(cumulativeDistributionRemainder, -2, 2, 0, 1000)
+        return bisection(cumulativeDistributionRemainder, -3, 3, 0.00001, 1000)
             
         
     def __generateGBrownianMotion(self):
         
-        gBrownianRealizations = np.zeros((self.numberOfTimes,self.numberOfSimulations))
+        gBrownianRealizations = np.zeros((self.numberOfTimesForGBM,self.numberOfSimulations))
         #in this way, we can apply it to a vector!
         findRoots = np.vectorize(self.__findRoot)
         
-        uniformRealizations = np.random.uniform(size=(self.numberOfTimes - 1,self.numberOfSimulations))
+        #the dimension is numberOfTimes - 1 because we need to generate n-1
+        #increments to have n realizations 
+        uniformRealizations = np.random.uniform(size=(self.numberOfTimesForGBM - 1,self.numberOfSimulations))
         
-        for timeIndex in range(1, self.numberOfTimes):
+        for timeIndex in range(1, self.numberOfTimesForGBM):
             
-            gBrownianIncrements = findRoots(uniformRealizations[timeIndex-1])
+            gBrownianIncrements = findRoots(uniformRealizations[timeIndex-1])\
+                * math.sqrt(self.dtGBrownianIncrements)
             
             gBrownianRealizations[timeIndex] = gBrownianRealizations[timeIndex-1] \
                 + gBrownianIncrements
@@ -307,8 +313,8 @@ class GBrownianMotion:
         """
         for k in range(numberOfPaths):
             path = self.getPathForGivenSimulation(simulationIndex + k);
-            self.time 
-            plt.plot(self.time, path)
+            self.timeForGBM 
+            plt.plot(self.timeForGBM, path)
         plt.xlabel('Time')
         plt.ylabel('Realizations of the process')
         plt.show()           
