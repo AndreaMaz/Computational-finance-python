@@ -46,7 +46,7 @@ def bisection(f,leftEnd,rightEnd,tolerance,N):
         elif f(currentRightEnd)*f_midPoint < 0:
             currentLeftEnd = midPoint
             currentRightEnd = currentRightEnd
-        elif f_midPoint <= tolerance:
+        elif abs(f_midPoint) <= tolerance:
             return midPoint
         else:
             return None
