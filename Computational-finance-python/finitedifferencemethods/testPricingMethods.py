@@ -14,6 +14,7 @@ import time
 from implicitEuler import ImplicitEuler
 from explicitEuler import ExplicitEuler
 from crankNicolson import CrankNicolson
+from upwind import Upwind
 
 from analyticformulas.analyticFormulas import blackScholesPriceCall
 
@@ -27,7 +28,7 @@ tmax = 3
 
 sigma = 0.9
 sigmaFunction = lambda x : sigma*x
-r = 0.4
+r = 1.4
 
 strike = 2
 
@@ -40,9 +41,10 @@ functionLeft = lambda x, t : 0
 #where T is the maturity 
 functionRight = lambda x, t : x - strike * math.exp(-r * t)
 
-dtExplicitEuler = dx*dx/(sigma*xmax)**2 # the minimum value such that it is stable
+dtExplicitEuler = 1.15*dx*dx/(sigma*xmax)**2 # the minimum value such that it is stable
 
 explicitEulerSolver = ExplicitEuler(dx, dtExplicitEuler, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
+upwind = Upwind(dx, dtExplicitEuler, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
 implicitEulerSolver = ImplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
 crankNicolsonSolver = CrankNicolson(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
     
@@ -125,13 +127,15 @@ def plotCallWithExactSolution():
         exactSolution = [0] + [blackScholesPriceCall(underlying, r, sigma, maturity, strike) for underlying in x[1:]] 
         
         solutionExplicitEuler = [explicitEulerSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
-        solutionImplicitEuler = [implicitEulerSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
-        solutionCrankNicolson = [crankNicolsonSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
+        solutionUpwind = [upwind.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
+        #solutionImplicitEuler = [implicitEulerSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
+        #solutionCrankNicolson = [crankNicolsonSolver.getSolutionForGivenTimeAndValue(maturity, underlying) for underlying in x]
 
         plt.plot(x, exactSolution, 'r', label="Analytic solution")
         plt.plot(x, solutionExplicitEuler, 'bo-', label="Explicit Euler")
-        plt.plot(x, solutionCrankNicolson, 'mo-', label="Crank-Nicolson")
-        plt.plot(x, solutionImplicitEuler, 'go-', label="Implicit Euler")
+        plt.plot(x, solutionUpwind, 'go-', label="Explicit Euler")
+        #plt.plot(x, solutionCrankNicolson, 'mo-', label="Crank-Nicolson")
+        #plt.plot(x, solutionImplicitEuler, 'go-', label="Implicit Euler")
 
         plt.axis((xmin-0.12, xmax+0.12, 0, x[-1]))
         plt.grid(True)

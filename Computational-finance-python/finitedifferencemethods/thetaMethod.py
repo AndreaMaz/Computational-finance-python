@@ -188,7 +188,7 @@ class ThetaMethod(PricingWithPDEs):
         #(u_i^{n+1}-u_i^n)/dt = theta F_i^{n+1}-(1 - theta)F_i^n
         knownTerm[-1] += self.theta * uPast[-1] \
            * (0.5 * self.multiplySecondDerivative * self.sigma(self.x[-2])**2 \
-              +  self.multiplyTermFirstDerivative * self.r * self.x[-2])
+              -  self.multiplyTermFirstDerivative * self.r * self.x[-2])
        
         u[0] = self.functionLeft(self.x[0], self.currentTime)
         

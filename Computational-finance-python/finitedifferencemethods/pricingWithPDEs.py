@@ -180,6 +180,8 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
             self.currentTime += self.dt
 
         plt.show()
+        self.__initializeU()
+        self.currentTime = 0
 
 
     def solveAndSave(self):
@@ -205,6 +207,8 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
             self.currentTime += self.dt
         self.solution = solution
         self.initialized = True #we want to compute all the solution only once.
+        self.__initializeU()
+        self.currentTime = 0
         return self.solution 
    
       

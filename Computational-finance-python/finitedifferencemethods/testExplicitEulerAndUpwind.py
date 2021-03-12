@@ -20,7 +20,7 @@ sigma = 0.5
 sigmaFunction = lambda x : sigma * x
 r = 0.8
 
-dt = 1.16*dx*dx /(sigma*xmax)**2
+dt = 1.22*dx*dx /(sigma*xmax)**2
 
 tmax = 2
 
@@ -33,6 +33,6 @@ payoff = lambda x : np.maximum(x - strike, 0)
 functionLeft = lambda x, t : 0
 functionRight = lambda x, t : x - strike * math.exp(-r * t)
 
-solver = ExplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
+solver = Upwind(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoff, functionLeft, functionRight)
 solver.solveAndPlot()
 

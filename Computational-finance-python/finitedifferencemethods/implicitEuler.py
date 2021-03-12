@@ -162,12 +162,12 @@ class ImplicitEuler(PricingWithPDEs):
         #uPast[0] is zero for a call option
         knownTerm[0] += (uPast[0]) \
            * (0.5 * self.multiplySecondDerivative * self.sigma(self.x[1])**2 \
-              -  self.multiplyTermFirstDerivative * self.r * self.x[1])
+              +  self.multiplyTermFirstDerivative * self.r * self.x[1])
                
         #uPast[-1] is zero for a put option
         knownTerm[-1] += (uPast[-1]) \
            * (0.5 * self.multiplySecondDerivative * self.sigma(self.x[-2])**2 \
-              +  self.multiplyTermFirstDerivative * self.r * self.x[-2])
+              -  self.multiplyTermFirstDerivative * self.r * self.x[-2])
        
         #left boundary condition
         u[0] = self.functionLeft(self.x[0], self.currentTime)

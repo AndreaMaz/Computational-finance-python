@@ -23,12 +23,12 @@ from implicitEuler import ImplicitEuler
 maturity = 3
 
 initialValue = 2
-r = 0.0
+r = 0.1
 sigma = 0.5 
 
 
 strike = 2
-lowerBarrier = 0.6
+lowerBarrier = 1.6
 
 analyticPrice = blackScholesDownAndOut(initialValue, r, sigma, maturity, strike, lowerBarrier)
 
@@ -68,12 +68,16 @@ print()
 
 #Theta methods
 
-dx = 0.05
+dx = 0.1
 
 xmin = lowerBarrier
 xmax = 13
 
-dt = dx 
+dtExplicit = dx*dx/(sigma*xmax)**2
+dtImplicit = dx
+
+dt = [dtExplicit] * 5 + [dtImplicit] * 6
+ 
 tmax = 3
 
 sigmaFunction = lambda x : sigma*x
@@ -81,13 +85,13 @@ sigmaFunction = lambda x : sigma*x
 functionLeft = lambda x, t : 0
 functionRight = lambda x, t : x - strike * math.exp(-r * t)
 
+k = 0
 
-
-for theta in np.arange(0, 1.0+0.001, 0.1) :
+for theta in np.arange(0, 1.0+0.01, 0.1) :
     
     timeInit = time.time()
     
-    solver = ThetaMethod(dx, dt, xmin, xmax, tmax, r, sigmaFunction, theta, payoffFunction, functionLeft, functionRight)
+    solver = ThetaMethod(dx, dt[k], xmin, xmax, tmax, r, sigmaFunction, theta, payoffFunction, functionLeft, functionRight)
 
     price = solver.getSolutionForGivenTimeAndValue(tmax, initialValue)
 
@@ -96,11 +100,12 @@ for theta in np.arange(0, 1.0+0.001, 0.1) :
     print("The percentage error is {:.3}".format((price-analyticPrice)/analyticPrice*100))
     print("The time needed is {:.3}".format(timeNeeded))
     print()
+    k = k + 1
     
     
 timeImplicitInit = time.time() 
 
-implicitEulerSolver = ImplicitEuler(dx, dt, xmin, xmax, tmax, r, sigmaFunction, payoffFunction, functionLeft, functionRight)
+implicitEulerSolver = ImplicitEuler(dx, dt[-1], xmin, xmax, tmax, r, sigmaFunction, payoffFunction, functionLeft, functionRight)
 
 priceIE = implicitEulerSolver.getSolutionForGivenTimeAndValue(tmax, initialValue)
 
