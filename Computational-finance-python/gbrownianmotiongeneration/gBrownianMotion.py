@@ -64,7 +64,8 @@ class GBrownianMotion:
             sigmaUp)#max vol of increments
         
         self.dxFirstDistributions = dxFirstDistributions
-        
+        self.minusA = minusA
+        self.plusA = plusA
         #it will be used for the interpolation of the cdf
         self.spaceDiscretizationFirstDistributions = np.arange(minusA, plusA + dxFirstDistributions, dxFirstDistributions) 
         
@@ -78,6 +79,7 @@ class GBrownianMotion:
         
         self.__setFirstDistributions()#the base on which we then interpolate
 
+        print(self.firstDistributions)
         self.__generateGBrownianMotion()#we generate the trajectories once for all
         """
         dt : float
@@ -126,7 +128,7 @@ class GBrownianMotion:
     
     def __setFirstDistributions(self):
         #we set here the values of teh distribution for the discretized times,
-        #on which we base to interpolare
+        #on which we base to interpolate
         self.firstDistributions = \
             [self.__getDistributionForGivenThreshold(threshold) for threshold in self.spaceDiscretizationFirstDistributions]
             
@@ -167,7 +169,7 @@ class GBrownianMotion:
             return self.__getInterpolatedSolution(x) - uniformRealization
         #we know that the Brownian increments will quite for sure not be smaller
         #than -2 or bigger than 2
-        return bisection(cumulativeDistributionRemainder, -3, 3, 0.00001, 1000)
+        return bisection(cumulativeDistributionRemainder, self.minusA, self.plusA, 0, 1000)
             
         
     def __generateGBrownianMotion(self):

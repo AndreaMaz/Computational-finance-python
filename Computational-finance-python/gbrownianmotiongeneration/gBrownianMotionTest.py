@@ -10,19 +10,20 @@ from gBrownianMotion import GBrownianMotion
 
 #the discretization for the solution of the PDE
 dx = 0.01
-xmin = - 3
-xmax = 3
+
+xmin = - 5
+xmax = 5
 
 dt = dx*dx 
 tmax = 1
 
 #the discretization where we compute the first distributions
-minusA = -3
-plusA = 3
-dxFirstDistributions = 0.01
+minusA = - 5
+plusA = 5
+dxFirstDistributions = 0.05
 
 #the uncertainty interval
-sigmaDown = 0.5
+sigmaDown = 1
 sigmaUp = 1
 
 #parameters for the simulation
@@ -37,6 +38,6 @@ gBrownianMotion = GBrownianMotion(dx, dt, xmin, xmax, tmax, minusA, plusA, dtBro
 realizations = gBrownianMotion.getGBrownianMotion()
 
 
-gBrownianMotion.plotPaths(0,5)
+gBrownianMotion.plotPaths(0,10)
 
 print("The average of the realizations is ", gBrownianMotion.getAverageAtGivenTime(tmax))

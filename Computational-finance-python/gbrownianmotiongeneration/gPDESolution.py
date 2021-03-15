@@ -152,14 +152,14 @@ class GPDESolution(PricingWithPDEs):
         u = np.zeros((len(uPast)))
 
         #condition at left border                     
-        secondDerivativeAtLeftBorder = self.multiplySecondDerivative * (uPast[1]-2*uPast[1]+uPast[1])                                  
-        u[0] = uPast[0] + 0.5 * self.gFunction(secondDerivativeAtLeftBorder)
+        secondDerivativeAtLeftBorder = self.multiplySecondDerivative * (uPast[1]-2*uPast[0]+uPast[0])                                  
+        u[0] = uPast[0] + self.gFunction(secondDerivativeAtLeftBorder)
         
         secondDerivatives = self.multiplySecondDerivative * (uPast[2:]-2*uPast[1:-1]+uPast[:-2])
-        u[1:-1] = uPast[1:-1] + 0.5 * self.gFunction(secondDerivatives)
+        u[1:-1] = uPast[1:-1] + self.gFunction(secondDerivatives)
         
         #condition at right border
-        secondDerivativeAtRightBorder = self.multiplySecondDerivative * (uPast[-2]-2*uPast[-1]+uPast[-2])                                  
-        u[-1] = uPast[-1] + 0.5 * self.gFunction(secondDerivativeAtRightBorder)
+        secondDerivativeAtRightBorder = self.multiplySecondDerivative * (uPast[-1]-2*uPast[-1]+uPast[-2])                                  
+        u[-1] = uPast[-1] + self.gFunction(secondDerivativeAtRightBorder)
 
         return u
