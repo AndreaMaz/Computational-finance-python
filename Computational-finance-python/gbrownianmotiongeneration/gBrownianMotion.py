@@ -9,8 +9,9 @@ import math
 import matplotlib.pyplot as plt
 
 
-from gPDESolution import GPDESolution
-#from gPDESolutionImplicit import GPDESolutionImplicit
+#from gPDESolution import GPDESolution
+
+from gPDESolutionImplicit import GPDESolutionImplicit
 from bisectionmethod.bisectionMethod import bisection
 
 class GBrownianMotion:
@@ -60,7 +61,7 @@ class GBrownianMotion:
     def __init__(self, dx, dt, xmin, xmax, tmax, minusA, plusA, dtGBrownianIncrements, 
                  dxFirstDistributions, sigmaDown, sigmaUp, numberOfSimulations):
 
-        self.pdeSolver = GPDESolution(dx, dt, xmin, xmax, tmax, sigmaDown,#min vol of increments 
+        self.pdeSolver = GPDESolutionImplicit(dx, dt, xmin, xmax, tmax, sigmaDown,#min vol of increments 
             sigmaUp)#max vol of increments
         
         self.dxFirstDistributions = dxFirstDistributions
